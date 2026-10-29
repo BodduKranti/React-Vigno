@@ -12,15 +12,9 @@ import shopItemrouts from './src/routes/shopitems.route.js';
 
 const app = express();
 
-const allowedOrigins = [
-    process.env.FRONTEND_URL,
-    'http://192.168.31.167:3000'
-];
+
 app.use(cors({
     origin: [
-        'http://192.168.31.167:3000',
-        "http://localhost:5173",
-        "http://localhost:3000",
         process.env.CLIENT_URL
     ].filter(Boolean),
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
@@ -37,5 +31,5 @@ app.use("/api/shop/shopitems", shopItemrouts)
 
 app.listen(ENV.PORT, () => {
     dbConnect()
-    console.log(`This server is running on ${ENV.PORT}`)
+    console.log(`This server is running sds on ${ENV.PORT}`)
 })

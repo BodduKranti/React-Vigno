@@ -83,6 +83,7 @@ export const signUpController = async (req, res) => {
 
 // Sing In Controller
 export const signInController = async (req, res) => {
+
     try {
         const { email, password } = req.body
         //get the user details use with findOne method 
