@@ -3,6 +3,8 @@ import jwt from "jsonwebtoken";
 export const isAuthMiddleWare = async (req, res, next) => {
     try {
         const token = req.cookies?.token;
+        console.log('get req', req)
+        console.log('get cookie', req.cookies)
         console.log('token auth', token)
         if (!token) {
             return res.status(401).json({ success: false, message: "Not authenticated" });
