@@ -11,7 +11,7 @@ import shopItemrouts from './src/routes/shopitems.route.js';
 
 
 const app = express();
-
+app.use(express.urlencoded({ extended: true }));
 
 app.use(cors({
     origin: [
