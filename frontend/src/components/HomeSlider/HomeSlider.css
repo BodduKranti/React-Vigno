@@ -1,0 +1,270 @@
+:root {
+    --ink: #16202e;
+    --brand: #e4572e;
+    --brand-dark: #c9431d;
+    --paper: #ffffff;
+}
+
+/* ---------- Hero ---------- */
+.hero {
+    width: 100%;
+}
+
+.hero .swiper {
+    height: clamp(320px, 55vw, 560px);
+}
+
+.hero__slide {
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.hero__slide::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(22, 32, 46, 0.85) 0%, rgba(22, 32, 46, 0.4) 55%, rgba(22, 32, 46, 0) 100%);
+}
+
+.hero__content {
+    position: relative;
+    max-width: 520px;
+    margin-left: clamp(24px, 8vw, 120px);
+    padding-right: 24px;
+    color: var(--paper);
+}
+
+.hero__content h1 {
+    font-size: clamp(1.7rem, 4.5vw, 3rem);
+    line-height: 1.1;
+    margin: 0 0 12px;
+}
+
+.hero__content p {
+    font-size: clamp(0.95rem, 2vw, 1.15rem);
+    margin: 0 0 24px;
+    opacity: 0.92;
+}
+
+.hero__cta {
+    display: inline-block;
+    background: var(--brand);
+    color: var(--paper);
+    padding: 12px 28px;
+    border-radius: 999px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.hero__cta:hover {
+    background: var(--brand-dark);
+}
+
+.hero__cta:focus-visible {
+    outline: 3px solid var(--paper);
+    outline-offset: 3px;
+}
+
+/* Swiper theme overrides */
+.hero .swiper-button-next,
+.hero .swiper-button-prev,
+.cats .swiper-button-next,
+.cats .swiper-button-prev {
+    color: var(--paper);
+}
+
+.hero .swiper-pagination-bullet {
+    background: var(--paper);
+    opacity: 0.6;
+}
+
+.hero .swiper-pagination-bullet-active {
+    background: var(--brand);
+    opacity: 1;
+}
+
+@media (max-width: 640px) {
+
+    .hero .swiper-button-next,
+    .hero .swiper-button-prev {
+        display: none;
+    }
+}
+
+/* ---------- Category carousel ---------- */
+.cats {
+    padding: 32px clamp(16px, 2vw, 80px);
+}
+
+.cats h2 {
+    margin: 0 0 16px;
+    color: var(--ink);
+    font-size: 1.4rem;
+}
+
+.cats .swiper-button-next,
+.cats .swiper-button-prev {
+    background: var(--ink);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+}
+
+.cats .swiper-button-next::after,
+.cats .swiper-button-prev::after {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.cats__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--ink);
+    font-weight: 600;
+}
+
+.cats__item img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 50%;
+    transition: transform 0.2s;
+}
+
+.cats__item:hover img {
+    transform: scale(1.04);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .cats__item img,
+    .hero__cta {
+        transition: none;
+    }
+}
+
+/* ---------- Food items slider ---------- */
+.foods {
+    padding: 8px clamp(16px, 2vw, 80px) 48px;
+}
+
+.foods h2 {
+    margin: 0 0 16px;
+    color: var(--ink);
+    font-size: 1.4rem;
+}
+
+.foods .swiper {
+    padding-bottom: 8px;
+}
+
+.foods .swiper-button-next,
+.foods .swiper-button-prev {
+    color: var(--paper);
+    background: var(--ink);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+}
+
+.foods .swiper-button-next::after,
+.foods .swiper-button-prev::after {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.food {
+    background: var(--paper);
+    border: 1px solid #e6e8ec;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.food img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    display: block;
+}
+
+.food__body {
+    padding: 14px;
+    color: var(--ink);
+}
+
+.food__body h3 {
+    margin: 0 0 2px;
+    font-size: 1.05rem;
+}
+
+.food__shop {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #5b6573;
+}
+
+.food__meta {
+    margin: 6px 0 12px;
+    font-size: 0.85rem;
+    color: #5b6573;
+}
+
+.food__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.food__row strong {
+    font-size: 1.1rem;
+}
+
+.food__add {
+    background: var(--paper);
+    color: var(--brand);
+    border: 1.5px solid var(--brand);
+    border-radius: 8px;
+    padding: 6px 22px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.food__add:hover {
+    background: var(--brand);
+    color: var(--paper);
+}
+
+.qty {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--brand);
+    color: var(--paper);
+    border-radius: 8px;
+    padding: 2px 6px;
+    font-weight: 700;
+}
+
+.qty button {
+    background: none;
+    border: 0;
+    color: inherit;
+    font-size: 1.2rem;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+}
+
+.food__add:focus-visible,
+.qty button:focus-visible {
+    outline: 3px solid var(--ink);
+    outline-offset: 2px;
+}

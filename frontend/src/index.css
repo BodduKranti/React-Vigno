@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+:root {
+    --brand: #ff6b06
+}
+
+.pane {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    transition: transform .7s ease, opacity .7s ease;
+}
+
+@media (max-width: 767px) {
+    .pane {
+        position: static;
+        width: 100%;
+        height: auto;
+        transform: none !important;
+        padding: 2.5rem 0;
+    }
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 50%;
+    height: 100%;
+    z-index: 5;
+    background: var(--brand);
+    color: #fff;
+    border-radius: 200px 28px 28px 200px;
+    transition: transform .7s ease, border-radius .7s ease;
+}
+
+.ov-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 2.5rem;
+    transition: opacity .4s ease;
+}
+
+[data-mode=signup] .overlay {
+    transform: translateX(-100%);
+    border-radius: 28px 200px 200px 28px;
+}
+
+@media (max-width: 767px) {
+    .overlay {
+        display: none;
+    }
+}
+
+[data-mode=signup] .p-up {
+    transform: translateX(100%);
+    opacity: 1;
+    z-index: 2;
+}
+
+.loginRegister_bg {
+    background-image: url('/images/bg-image.png');
+    background-attachment: fixed;
+    position: relative;
+    background-size: cover;
+    background-position: right;
+}
+
+.innerBg {
+    background-image: url('/images/inner-bg.png');
+    background-attachment: fixed;
+    position: relative;
+    background-size: cover;
+    background-position: right;
+}
+
+.innerBg::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, .9);
+}
