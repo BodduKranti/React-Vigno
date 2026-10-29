@@ -48,7 +48,6 @@ export interface userSignIn {
     email: string,
     password: string
 }
-export const VITE_API_URL = `http://localhost:5000/api`
 
 export enum itemFoodType {
     "no-veg" = "Non Vegetrian",
