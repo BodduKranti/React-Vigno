@@ -1,3 +1,11 @@
+# 1. API proxy FIRST
+[[redirects]]
+  from = "/api/*"
+  to = "https://react-vigno.onrender.com/api/:splat"
+  status = 200
+  force = true
+
+# 2. SPA fallback LAST
 [[redirects]]
   from = "/*"
   to = "/index.html"
