@@ -6,6 +6,8 @@ export const isAuthMiddleWare = async (req, res, next) => {
         console.log('get req', req)
         console.log('get cookie', req.cookies)
         console.log('token auth', token)
+
+        console.log("raw cookie header:", req.headers.cookie);
         if (!token) {
             return res.status(401).json({ success: false, message: "Not authenticated" });
         }
