@@ -61,6 +61,8 @@ export const signUpController = async (req, res) => {
             role: role === "user" ? "user" : "user",
         });
 
+        console.log('user', user)
+
         const token = await genToken(user._id);
 
         res.cookie("token", token, cookieOptions);

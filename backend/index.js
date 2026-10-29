@@ -14,9 +14,7 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cors({
-    origin: [
-        process.env.CLIENT_URL
-    ].filter(Boolean),
+    origin: process.env.CLIENT_URL,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,

@@ -1,24 +1,16 @@
 import jwt from "jsonwebtoken";
 
-export const isAuthMiddleWare = (req, res, next) => {
+export const isAuthMiddleWare = async (req, res, next) => {
     try {
         const token = req.cookies?.token;
-
-        console.log('token first', token)
-
+        console.log('token auth', token)
         if (!token) {
-            return res.status(401).json({
-                message: "Token not found",
-            });
+            return res.status(401).json({ success: false, message: "Not authenticated" });
         }
-
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-        req.userId = decoded.userId;
+        req.userId = decoded.userId; // must match what genToken signs
         next();
-    } catch (error) {
-        return res.status(401).json({
-            message: "Invalid or expired token",
-        });
+    } catch (err) {
+        return res.status(401).json({ success: false, message: "Invalid token" });
     }
 };
