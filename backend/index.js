@@ -19,7 +19,7 @@ app.use(cors({
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
 }))
-
+app.set("trust proxy", 1);
 app.use(express.json())//convert in to json
 app.use(cookieParser())
 app.use("/api/auth", authRouter)
