@@ -5,6 +5,7 @@ export const genToken = async (userId) => {
 
     try {
         const token = await jwt.sign({ userId }, ENV.JWT_SECRET, { expiresIn: "7d" })
+        console.log('get token', token)
         return token
     } catch (error) {
         console.log(`Something worng with token ${error}`)

@@ -64,6 +64,7 @@ export const signUpController = async (req, res) => {
         console.log('user', user)
 
         const token = await genToken(user._id);
+        console.log('singup', token)
 
         res.cookie("token", token, cookieOptions);
 
@@ -119,8 +120,9 @@ export const signInController = async (req, res) => {
                 message: "Invalid email or password",
             });
         }
-
+        console.log('singin user', user)
         const token = await genToken(user._id);
+        console.log('singjn token', token)
 
         res.cookie("token", token, cookieOptions);
 
