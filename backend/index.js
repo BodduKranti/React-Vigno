@@ -21,7 +21,7 @@ app.use(cors({
         'http://192.168.31.167:3000',
         "http://localhost:5173",
         "http://localhost:3000",
-        process.env.FRONTEND_URL
+        process.env.CLIENT_URL
     ].filter(Boolean),
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
