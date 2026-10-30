@@ -202,9 +202,9 @@ export const sendOTPController = async (req, res) => {
         user.resetOtp = OTP;
         user.otpExpires = Date.now() + 5 * 60 * 1000;
         user.isOtpVerified = false;
-
+        console.log('send email user', user)
         await user.save();
-        await sendOTPemail(email, OTP);
+        await sendOTPemail(user?.email, OTP);
 
         return res.status(200).json({
             success: true,
