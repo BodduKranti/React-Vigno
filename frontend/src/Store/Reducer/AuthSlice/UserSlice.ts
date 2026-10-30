@@ -32,10 +32,13 @@ const userAuthSlice = createSlice({
         setUser: (state, action: PayloadAction<Partial<userAuth>>) => (
             Object.assign(state, action.payload)
         ),
-        logout: () => ({
-            ...inititalValue,
-            loading: false,   // after logout there is nothing left to load
-        }),
+        logout: () => {
+            localStorage.clear()   // works, but it's a side effect inside a reducer
+            return {
+                ...inititalValue,
+                loading: false,
+            }
+        },
     },
     extraReducers: (builder) => {
         builder

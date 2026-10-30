@@ -23,3 +23,10 @@ export const AxiosFormData = axios.create({
         "Content-Type": "multipart/form-data"
     }
 })
+
+// header pass token
+AxiosInstance.interceptors.request.use((config) => {
+    const token = localStorage.getItem("token");
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+    return config;
+})

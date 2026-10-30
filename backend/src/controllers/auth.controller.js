@@ -68,6 +68,7 @@ export const signUpController = async (req, res) => {
         res.cookie("token", token, cookieOptions);
 
         return res.status(201).json({
+            token: token,
             success: true,
             message: "User registered successfully",
             user: {
@@ -126,6 +127,7 @@ export const signInController = async (req, res) => {
         res.cookie("token", token, cookieOptions);
 
         return res.status(200).json({
+            token: token,
             success: true,
             message: "Login successful",
             user: {

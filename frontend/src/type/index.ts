@@ -46,7 +46,8 @@ export interface userRegister {
 
 export interface userSignIn {
     email: string,
-    password: string
+    password: string,
+    token?: any
 }
 
 export enum itemFoodType {

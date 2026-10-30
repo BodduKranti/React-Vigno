@@ -17,7 +17,8 @@ import { useAppDispatch } from "../../../Store/hook"
 import { getUserfun } from "../../../Store/StoreThunk/GetUserThunk"
 interface userInterfacep {
     email: string,
-    password: string
+    password: string,
+    token?: string
 }
 
 
@@ -41,10 +42,12 @@ const LoginForm = () => {
         setLoader(true)
         const payload = { ...values }
         signInUser.mutate(payload, {
-            onSuccess: () => {
+            onSuccess: (data) => {
+                console.log('login after data', data?.token)
                 setLoader(false)
                 console.log(`Successfully logged in`)
                 toast.success(`Successfully logged in`)
+                localStorage.setItem('token', data?.token)
                 dispatch(getUserfun())
             },
             onError: (error) => {
