@@ -1,4 +1,5 @@
 import BestShop from "../../components/Shop/BestShop"
+import PageTitleWithMetaDetails from "../../Layout/PageTileWithMeta"
 
 const Restaurant = () => {
     return (
@@ -9,4 +10,4 @@ const Restaurant = () => {
     )
 }
 
-export default Restaurant
+export default PageTitleWithMetaDetails(Restaurant, 'Restaurants', '')

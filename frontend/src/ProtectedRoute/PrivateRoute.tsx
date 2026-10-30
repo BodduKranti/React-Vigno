@@ -5,6 +5,7 @@ import Footer from "../components/Footer/Footer";
 import DeliveryBoyNavbar from "../components/Header/DeliveryBoyNavbar";
 import OwnerNavbar from "../components/Header/OwnerNavbar";
 import type { UserRole } from "../type";
+import ScrollToTop from "../utils/ScrollToTop";
 
 interface PrivateRouteProps {
     allowRoles?: UserRole[];
@@ -47,6 +48,7 @@ const PrivateRoute = ({ allowRoles }: PrivateRouteProps) => {
 
     return (
         <div className="innerBg min-h-screen w-full">
+            <ScrollToTop />
             <div className="relative w-full">
                 {navbar}
                 <Outlet />
