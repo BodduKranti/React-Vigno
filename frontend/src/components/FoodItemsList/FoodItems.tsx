@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { itemFoodType } from "../../type";
 import { IoIosStar, IoIosStarOutline } from "react-icons/io";
-import { FaShoppingCart } from "react-icons/fa";
 import { useAppDispatch } from "../../Store/hook";
 import { addCart, removeCart } from "../../Store/Reducer/AuthSlice/UserSlice";
 export type FoodType = "veg" | "non-veg";
