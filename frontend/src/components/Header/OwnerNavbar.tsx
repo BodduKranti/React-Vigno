@@ -16,6 +16,7 @@ import { useAppDispatch } from "../../Store/hook";
 import { logout } from "../../Store/Reducer/AuthSlice/UserSlice";
 import UserProfile from "../UserProfile/UserProfile";
 import { ROLE_HOME } from "../../type";
+import Logo from "../Logo";
 
 
 export default function OwnerNavbar({ user }: { user: any }) {
@@ -58,16 +59,7 @@ export default function OwnerNavbar({ user }: { user: any }) {
                         className="flex shrink-0 items-center gap-2"
                         aria-label="QuickBite home"
                     >
-                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-500 text-white">
-                            <Utensils size={27} strokeWidth={2.3} />
-                        </div>
-
-                        <div>
-                            <h1 className="text-2xl font-extrabold tracking-tight text-gray-900">
-                                Quick<span className="text-orange-500">Bite</span>
-                            </h1>
-                            <p className="text-xs text-gray-500">Good Food, Faster</p>
-                        </div>
+                        <Logo />
                     </Link>
 
                     <div className="w-auto flex justify-end gap-3 items-center">
