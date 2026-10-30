@@ -29,7 +29,7 @@ const RestaurantSection = ({ shopDts: shop, loader }: ShopDetails) => {
         <>
             <div className="relative h-56 w-full overflow-hidden sm:h-72 lg:h-80">
                 <img src={shop.image} alt={shop.name} className="h-full w-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/50 via-black/10 to-transparent" />
             </div>
 
             <div className="my-4 cats max-w-[1600px] mx-auto">

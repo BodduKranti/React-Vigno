@@ -1,3 +1,4 @@
+import { Link } from "react-router"
 import { type cartitemsprops } from "../../Store/Reducer/AuthSlice/UserSlice"
 
 interface cartItem {
@@ -33,6 +34,7 @@ const FoodTypeMark = ({ foodtype }: { foodtype: string }) => {
 const CartItems = ({ item, onIncrease, onDecrease, onRemove }: cartItem) => {
     const lineTotal = item.price * item.quantity!
 
+
     return (
         <article className="group relative flex gap-4 rounded-2xl border border-orange-100 bg-white p-3 shadow-sm transition-shadow hover:shadow-md sm:gap-5 sm:p-4">
             {/* Image */}
@@ -54,9 +56,12 @@ const CartItems = ({ item, onIncrease, onDecrease, onRemove }: cartItem) => {
                 <div className="pr-8">
                     <div className="flex items-center gap-2">
                         <FoodTypeMark foodtype={item.foodtype} />
-                        <h3 className="truncate text-base font-semibold text-zinc-900 sm:text-lg">
-                            {item.name}
-                        </h3>
+                        <Link to={`/restaurants/${item?.shop}`} className="cursor-pointer hover:text-orange-500">
+                            <h3 className="truncate text-base font-semibold text-zinc-900 sm:text-lg">
+                                {item.name}
+                            </h3>
+                        </Link>
+
                     </div>
 
                     <p className="mt-1 text-sm text-zinc-500">
@@ -111,7 +116,7 @@ const CartItems = ({ item, onIncrease, onDecrease, onRemove }: cartItem) => {
                 aria-label={`Remove ${item.name} from cart`}
                 className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full text-zinc-400 transition-colors hover:bg-red-50 hover:text-red-600 focus-visible:outline-2 focus-visible:outline-red-500 sm:right-3 sm:top-3"
             >
-                <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <svg viewBox="0 0 24 24" className="h-4.5 w-4.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="M3 6h18" />
                     <path d="M8 6V4h8v2" />
                     <path d="M6 6l1 14h10l1-14" />
