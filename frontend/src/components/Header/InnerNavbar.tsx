@@ -165,13 +165,14 @@ export default function InnerNavbar({ user }: { user: any }) {
                         <div className="w-auto flex items-center gap-3">
                             <button
                                 type="button"
-                                aria-label={`Cart, ${cartCount} items`}
-                                className="relative rounded-xl p-2 text-gray-800 hover:bg-orange-50"
+                                aria-label={`Shopping cart with ${cartCount} items`}
+                                className="relative shrink-0 text-gray-800 transition hover:scale-110 hover:text-orange-500"
+                                onClick={() => navigate('/cart')}
                             >
-                                <ShoppingCart size={24} />
-                                {cartCount > 0 && (
-                                    <span className="absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-orange-500 px-1 text-[10px] font-bold text-white">
-                                        {cartCount}
+                                <ShoppingCart size={26} />
+                                {cartItems?.length > 0 && (
+                                    <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-orange-500 px-1 text-xs font-bold text-white">
+                                        {cartItems.length || 0}
                                     </span>
                                 )}
                             </button>
