@@ -8,10 +8,9 @@ import { sendOTPemail } from "../utils/Mail.js";
 const cookieOptions = {
     httpOnly: true,
     secure: true,
-    sameSite: "lax",
+    sameSite: "none",   // required for cross-site
     maxAge: 7 * 24 * 60 * 60 * 1000,
-    path: "/",
-};
+}
 
 // Signup Controller
 export const signUpController = async (req, res) => {
