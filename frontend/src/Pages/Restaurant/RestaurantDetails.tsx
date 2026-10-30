@@ -2,9 +2,7 @@ import { useEffect } from "react"
 import { useAppDispatch, useAppSelecter } from "../../Store/hook"
 import { getShopByShopIdThunk } from "../../Store/StoreThunk/GetshopThunk"
 import { useParams } from "react-router"
-import FoodItemsListData from "../../components/FoodItemsList/FoodItemsListData"
 import RestaurantSection from "./RestaurantSection"
-import ErrorBoundary from "../../components/ErrorBoundry/ErrorBoundary"
 
 const RestaurantDetails = () => {
     const dispatch = useAppDispatch()
