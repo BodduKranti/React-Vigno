@@ -128,3 +128,27 @@ export const getShopBycity = async (req, res) => {
         })
     }
 }
+
+//GEt shop by request the id
+export const getShopByShopidcontroller = async (req, res) => {
+    try {
+
+        const shopId = req.params.shopId
+        const shop = await Shop.findById(shopId).populate([{
+            path: 'items',
+            options: { sort: { updatedAt: -1 } }
+        }])
+        if (!shop) {
+            return res.status(400).json({
+                message: 'Shop is not found'
+            })
+        }
+        console.log('shopbyid', shop)
+        return res.status(200).json(shop)
+
+    } catch (error) {
+        return res.status(500).json({
+            message: `Get shop by id getting error ${error}`
+        })
+    }
+}

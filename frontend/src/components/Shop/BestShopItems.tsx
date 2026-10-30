@@ -19,7 +19,7 @@ const optimize = (url?: string, w = 800) =>
 
 const OverlayShopCard = ({ items: shop, focus }: shopItems) =>
     shop._id && (true) ? (
-        <Link to={`/shop/${shop._id}`} aria-label={`Open ${shop.name}`} className="block">
+        <Link to={`/restaurants/${shop._id}`} aria-label={`Open ${shop.name}`} className="block">
             <BestShopItems items={shop} focus={focus} />
         </Link>
     ) : (

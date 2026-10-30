@@ -12,7 +12,7 @@ export interface ratingprops {
 }
 
 export interface FoodItem {
-    id: number | string;
+    _id: number | string;
     name: string;
     shop: string;
     price: number;
@@ -72,7 +72,7 @@ const FoodItems = ({ f, quantity, onAdd, onRemove }: FoodItemsProps) => {
     const remove = (items: any) => {
         (controlled ? onRemove?.(f) : setLocalQty((q) => Math.max(0, q - 1)))
         // dispatch(addCart(items))
-        dispatch(removeCart(items))
+        dispatch(removeCart(items?._id))
     };
 
     // Small "bump" when the number changes
@@ -102,6 +102,7 @@ const FoodItems = ({ f, quantity, onAdd, onRemove }: FoodItemsProps) => {
 
     return (
         <article
+            key={f._id}
             className={`group overflow-hidden rounded-3xl bg-white shadow-sm ring-1 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-orange-100 ${inCart ? "ring-orange-300" : "ring-orange-100"
                 }`}
         >
@@ -219,7 +220,7 @@ const FoodItems = ({ f, quantity, onAdd, onRemove }: FoodItemsProps) => {
 export const FoodItemsGrid = ({ items = [] }: { items?: FoodItem[] }) => (
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {items.map((it) => (
-            <FoodItems key={it.id} f={it} />
+            <FoodItems key={it._id} f={it} />
         ))}
     </div>
 );

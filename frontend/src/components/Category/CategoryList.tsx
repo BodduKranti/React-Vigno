@@ -12,8 +12,8 @@ const CategoryList = () => {
             <Swiper
                 modules={[Navigation, A11y]}
                 navigation={false}
-                spaceBetween={40}
-                slidesPerView={2}
+                spaceBetween={20}
+                slidesPerView={3}
                 breakpoints={{
                     480: { slidesPerView: 3.5 },
                     768: { slidesPerView: 5 },

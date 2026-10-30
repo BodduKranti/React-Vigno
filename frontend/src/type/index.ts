@@ -17,6 +17,7 @@ export const ROUTES = Object.freeze({
     UPDATE_SHOP: "/shop/editshop",
     GET_SHOP: "/shop/getmyshop",
     GET_SHOPS_BY_CITY: 'shop/getshopbycity',
+    GET_SHOP_BY_SHOP_ID: `shop/getShopByid`,
 
     CREATE_SHOP_ITEMS: "/shop/shopitems/createshopItems",
     UPDATE_SHOP_ITEMS: "/shop/shopitems/updateShopItems",

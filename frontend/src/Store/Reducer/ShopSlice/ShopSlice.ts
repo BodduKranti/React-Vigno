@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getShopData, getShopItemsbyId } from "../../StoreThunk/GetshopThunk";
+import { getShopByShopIdThunk, getShopData, getShopItemsbyId } from "../../StoreThunk/GetshopThunk";
 
 
 const getMyshopdataSlice = createSlice({
@@ -8,7 +8,8 @@ const getMyshopdataSlice = createSlice({
         myshopData: null,
         loader: false,
         error: '',
-        shopgetbyIditems: null
+        shopgetbyIditems: null,
+        ShopDetailsbyShopid: null
     },
     reducers: {
 
@@ -41,6 +42,20 @@ const getMyshopdataSlice = createSlice({
             .addCase(getShopItemsbyId.rejected, (state, action: Partial<any>) => {
                 state.loader = false
                 state.error = action.payload
+            })
+
+            //get Shop details by shopid
+            .addCase(getShopByShopIdThunk.pending, (state) => {
+                state.loader = true
+            })
+            .addCase(getShopByShopIdThunk.fulfilled, (state, action: Partial<any>) => {
+                state.loader = false
+                state.ShopDetailsbyShopid = action.payload
+                state.error = ''
+            })
+            .addCase(getShopByShopIdThunk.rejected, (state, action) => {
+                state.loader = false
+                state.error = action.payload ?? ''
             })
     }
 })

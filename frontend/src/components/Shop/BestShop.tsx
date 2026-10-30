@@ -34,7 +34,7 @@ const BestShop = () => {
                         modules={[Navigation, A11y]}
                         navigation={false}
                         spaceBetween={20}
-                        slidesPerView={2}
+                        slidesPerView={1}
                         breakpoints={{
                             480: { slidesPerView: 1 },
                             768: { slidesPerView: 2 },

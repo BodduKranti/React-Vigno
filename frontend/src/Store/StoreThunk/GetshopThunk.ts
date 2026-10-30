@@ -18,6 +18,15 @@ export const getShopData = createAsyncThunk<any, void, { rejectValue: string }>(
 }
 );
 
+// Get shop by shop id
+export const getShopByShopIdThunk = createAsyncThunk<any, void, { rejectValue: string }>('get-shop/shopid', async (shopid: any, { rejectWithValue }) => {
+    try {
+        const response = await AxiosInstance.get(`${ROUTES.GET_SHOP_BY_SHOP_ID}/${shopid}`, { withCredentials: true })
+        return response?.data
+    } catch (error: any) {
+        return rejectWithValue(error?.response?.data?.error)
+    }
+})
 
 export const getAllShopFoodItems = createAsyncThunk<any, void, { rejectValue: string }>('getAll/shopfooditems', async (_, { rejectWithValue }) => {
     try {
@@ -31,7 +40,7 @@ export const getAllShopFoodItems = createAsyncThunk<any, void, { rejectValue: st
     }
 })
 
-export const getShopItemsbyId = createAsyncThunk<any, string, { rejectValue: string }>(
+export const getShopItemsbyId = createAsyncThunk<any, any, { rejectValue: string }>(
     'getshopitems/id',
     async (id, { rejectWithValue }) => {
         try {
