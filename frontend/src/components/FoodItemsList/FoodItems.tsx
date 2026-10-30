@@ -2,7 +2,15 @@
 import { useEffect, useState } from "react";
 import { itemFoodType } from "../../type";
 import { IoIosStar, IoIosStarOutline } from "react-icons/io";
+import { FaShoppingCart } from "react-icons/fa";
+import { useAppDispatch } from "../../Store/hook";
+import { addCart, removeCart } from "../../Store/Reducer/AuthSlice/UserSlice";
 export type FoodType = "veg" | "non-veg";
+
+export interface ratingprops {
+    count: number,
+    average: number
+}
 
 export interface FoodItem {
     id: number | string;
@@ -12,7 +20,7 @@ export interface FoodItem {
     image: string;
     category: string;
     foodtype: FoodType; // matches the `foodtype` field you already save
-    rating?: any
+    rating?: ratingprops
 }
 
 interface FoodItemsProps {
@@ -53,12 +61,20 @@ export const FoodTypeIcon = ({ type, size = 14 }: { type: FoodType; size?: numbe
 
 const FoodItems = ({ f, quantity, onAdd, onRemove }: FoodItemsProps) => {
     // Falls back to local state when the parent doesn't control the quantity
+    const dispatch = useAppDispatch()
     const [localQty, setLocalQty] = useState(0);
     const controlled = quantity !== undefined;
     const qty = controlled ? quantity : localQty;
 
-    const add = () => (controlled ? onAdd?.(f) : setLocalQty((q) => q + 1));
-    const remove = () => (controlled ? onRemove?.(f) : setLocalQty((q) => Math.max(0, q - 1)));
+    const add = (items: any) => {
+        (controlled ? onAdd?.(f) : setLocalQty((q) => q + 1))
+        dispatch(addCart(items))
+    };
+    const remove = (items: any) => {
+        (controlled ? onRemove?.(f) : setLocalQty((q) => Math.max(0, q - 1)))
+        // dispatch(addCart(items))
+        dispatch(removeCart(items))
+    };
 
     // Small "bump" when the number changes
     const [bump, setBump] = useState(false);
@@ -143,9 +159,12 @@ const FoodItems = ({ f, quantity, onAdd, onRemove }: FoodItemsProps) => {
                             </span>
                         </p>
                     </div>
-                    <div className="w-auto">
+                    <div className="w-auto flex flex-col ">
                         <div className="flex gap-0.5">
                             {rating(f?.rating?.average || 0)}
+                        </div>
+                        <div className="flex gap-0.5 text-sm text-orange-400 mt-1 font-semibold">
+                            {f?.rating?.count || 0}
                         </div>
                     </div>
 
@@ -158,7 +177,7 @@ const FoodItems = ({ f, quantity, onAdd, onRemove }: FoodItemsProps) => {
                     {/* Add button <-> stepper (cross-fade) */}
                     <div className="relative h-8 w-15">
                         <button
-                            onClick={add}
+                            onClick={() => add(f)}
                             tabIndex={inCart ? -1 : 0}
                             className={`absolute inset-0 rounded-xl border border-orange-500 text-xs font-semibold 
                                 uppercase tracking-wide text-orange-600 transition-all duration-300 
@@ -174,17 +193,17 @@ const FoodItems = ({ f, quantity, onAdd, onRemove }: FoodItemsProps) => {
                                 }`}
                         >
                             <button
-                                onClick={remove}
+                                onClick={() => remove(f)}
                                 aria-label={`Remove one ${f.name}`}
                                 className="flex h-4 w-4 items-center justify-center rounded-lg text-sm leading-none transition-transform hover:bg-orange-600 active:scale-90"
                             >
                                 −
                             </button>
-                            <span className={`min-w-6 text-center text-sm font-bold transition-transform duration-150 ${bump ? "scale-125" : "scale-100"}`}>
+                            <span className={`min-w-6 text-center flex justify-center items-center gap-2 text-sm font-bold transition-transform duration-150 ${bump ? "scale-125" : "scale-100"}`}>
                                 {qty}
                             </span>
                             <button
-                                onClick={add}
+                                onClick={() => add(f)}
                                 aria-label={`Add one more ${f.name}`}
                                 className="flex h-4 w-4 items-center justify-center rounded-lg text-sm leading-none transition-transform hover:bg-orange-600 active:scale-90"
                             >

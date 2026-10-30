@@ -1,13 +1,25 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import { getUserfun } from '../../StoreThunk/GetUserThunk'
 
+export interface cartitemsprops {
+    _id: string,
+    name: string,
+    image: string,
+    category: string,
+    price: number,
+    quantity?: number,
+    shop?: string,
+    foodtype: string
+}
+
 interface userAuth {
     fullname: string,
     email: string,
     loading: boolean,
     error: any,
     role: string,
-    isAuthenitcate: boolean
+    isAuthenitcate: boolean,
+    cartItems: cartitemsprops[]
 }
 
 // interface userToken extends userAuth {
@@ -20,7 +32,8 @@ const inititalValue: userAuth = {
     loading: true,
     error: '',
     role: '',
-    isAuthenitcate: false
+    isAuthenitcate: false,
+    cartItems: []
 }
 
 const userAuthSlice = createSlice({
@@ -38,6 +51,25 @@ const userAuthSlice = createSlice({
                 ...inititalValue,
                 loading: false,
             }
+        },
+
+        //Add cartitems
+        addCart: (state, action: PayloadAction<cartitemsprops>) => {
+            const qty = action.payload.quantity ?? 1
+            const existing = state.cartItems.find((item) => item._id === action.payload._id)
+
+            if (existing) {
+                existing.quantity = (existing.quantity ?? 1) + qty
+            } else {
+                state.cartItems.push({ ...action.payload, quantity: qty })
+            }
+        },
+        removeCart: (state, action: PayloadAction<string>) => {
+            const item = state.cartItems.find((i) => i._id === action.payload)
+            if (item && (item.quantity ?? 1) > 1) item.quantity = (item.quantity ?? 1) - 1
+        },
+        deleteCart: (state, action: PayloadAction<string>) => {
+            state.cartItems = state.cartItems.filter((i) => i._id !== action.payload)
         },
     },
     extraReducers: (builder) => {
@@ -61,5 +93,5 @@ const userAuthSlice = createSlice({
     }
 })
 
-export const { setUser, logout } = userAuthSlice.actions;
+export const { setUser, logout, addCart, removeCart, deleteCart } = userAuthSlice.actions;
 export default userAuthSlice.reducer

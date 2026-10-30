@@ -17,8 +17,8 @@ import {
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { logoutUserfun } from "../../hooks/useGetuser";
-import { Link, NavLink } from "react-router";
-import { useAppDispatch } from "../../Store/hook";
+import { Link, NavLink, useNavigate } from "react-router";
+import { useAppDispatch, useAppSelecter } from "../../Store/hook";
 import { logout } from "../../Store/Reducer/AuthSlice/UserSlice";
 import CurrentLocation from "../Location/Location";
 import UserProfile from "../UserProfile/UserProfile";
@@ -33,6 +33,7 @@ const navigation = [
 
 export default function InnerNavbar({ user }: { user: any }) {
     const dispatch = useAppDispatch()
+    const { cartItems } = useAppSelecter((state) => state.userInfo)
     const [mobileOpen, setMobileOpen] = useState(false);
     // Replace these values with real cart and user data.
     const cartCount = 3;
@@ -46,7 +47,7 @@ export default function InnerNavbar({ user }: { user: any }) {
     ];
 
     const { refetch, isFetching } = logoutUserfun()
-
+    const navigate = useNavigate()
 
     const logOut = async () => {
         const result = await refetch();
@@ -61,6 +62,7 @@ export default function InnerNavbar({ user }: { user: any }) {
         }
     }
 
+    console.log('cartItems', cartItems)
     return (
         <>
             <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white shadow-sm">
@@ -116,11 +118,12 @@ export default function InnerNavbar({ user }: { user: any }) {
                         type="button"
                         aria-label={`Shopping cart with ${cartCount} items`}
                         className="relative shrink-0 text-gray-800 transition hover:scale-110 hover:text-orange-500"
+                        onClick={() => navigate('/cart')}
                     >
                         <ShoppingCart size={26} />
-                        {cartCount > 0 && (
+                        {cartItems?.length > 0 && (
                             <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-orange-500 px-1 text-xs font-bold text-white">
-                                {cartCount}
+                                {cartItems.length || 0}
                             </span>
                         )}
                     </button>

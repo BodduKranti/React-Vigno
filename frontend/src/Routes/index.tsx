@@ -11,6 +11,7 @@ import DeliveryBoyDashboard from "../Pages/Role/DeliveryBoyDashboard";
 import RoleRedirect from "../ProtectedRoute/RoleRedirect";
 import Unauthorized from "../Pages/Unauthorized/Unauthorized";
 import AddShop from "../Pages/Owner/AddShop/AddShop";
+import Cart from "../Pages/Cart/Cart";
 
 
 export const pageRoutes = createBrowserRouter([
@@ -28,6 +29,7 @@ export const pageRoutes = createBrowserRouter([
         children: [
             { path: "/", element: <App /> },
             { path: "/restaurants", element: <Restaurant /> },
+            { path: "/cart", element: <Cart /> },
         ],
     },
     {
