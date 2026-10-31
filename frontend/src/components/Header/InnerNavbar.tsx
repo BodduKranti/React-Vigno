@@ -65,7 +65,7 @@ export default function InnerNavbar({ user }: { user: any }) {
     console.log('cartItems', cartItems)
     return (
         <>
-            <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white shadow-sm">
+            <header className="sticky top-0 z-9999 w-full border-b border-gray-100 bg-white shadow-sm">
                 {/* Desktop and tablet navbar */}
                 <div className="mx-auto hidden max-w-[1600px] items-center gap-5 px-6 py-4 lg:flex xl:gap-7">
                     {/* Logo */}
