@@ -57,6 +57,8 @@ const getMyshopdataSlice = createSlice({
                 state.loader = false
                 state.error = action.payload ?? ''
             })
+
+        // get cate items
     }
 })
 

@@ -1,5 +1,5 @@
 import express from 'express'
-import { createShopItems, deleteShopItemControler, editShopItems, getshopItemsbyCity, getShopItemsbyId, getShopItemscontroller } from '../controllers/items.controller.js'
+import { createShopItems, deleteShopItemControler, editShopItems, getCategoryItemsbyCategoryname, getshopItemsbyCity, getShopItemsbyId, getShopItemscontroller } from '../controllers/items.controller.js'
 import { isAuthMiddleWare } from '../middleware/isAuth.js'
 import { upload } from '../middleware/multer.js'
 
@@ -11,5 +11,6 @@ shopItemrouts.get('/getAllshopItems', isAuthMiddleWare, getShopItemscontroller)
 shopItemrouts.get(`/getItemById/:itemId`, isAuthMiddleWare, getShopItemsbyId)
 shopItemrouts.delete(`/deleteItemById/:itemId`, isAuthMiddleWare, deleteShopItemControler)
 shopItemrouts.get(`/getallitemsBycity/:city`, isAuthMiddleWare, getshopItemsbyCity)
+shopItemrouts.get('/getcateitmeByCat/:cat', isAuthMiddleWare, getCategoryItemsbyCategoryname)
 
 export default shopItemrouts

@@ -57,3 +57,16 @@ export const getShopItemsbyId = createAsyncThunk<any, any, { rejectValue: string
     },
     { condition: (id) => Boolean(id) }
 )
+
+export const cateItemsThunkcontroler = createAsyncThunk<any, void, { rejectValue: any }>('cateitems/cat', async (cat, { rejectWithValue }) => {
+    try {
+        const res = await queryClient.fetchQuery({
+            queryKey: ['cate-items'],
+            queryFn: () => AxiosInstance.get(`${ROUTES.GET_CATE_ITEMS_BY_CAT}/${cat}`, { withCredentials: true }),
+            staleTime: 0
+        })
+        return res
+    } catch (error: any) {
+        return rejectWithValue(error?.response?.data?.message)
+    }
+})

@@ -1,10 +1,11 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import userAuthReducer from './Reducer/AuthSlice/UserSlice'
 import getMyshopdataReducer from './Reducer/ShopSlice/ShopSlice'
-
+import mapReducer from './Reducer/MapSlice/MapSlice'
 const rootReducer = combineReducers({
     userInfo: userAuthReducer,
-    getMyshopdata: getMyshopdataReducer
+    getMyshopdata: getMyshopdataReducer,
+    map: mapReducer
 })
 
 export const MainStore = configureStore({

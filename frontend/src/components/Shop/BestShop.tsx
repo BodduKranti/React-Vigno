@@ -18,7 +18,8 @@ const BestShop = () => {
     const shopList = Array.isArray(data) && data || []
     console.log('data', data)
     return (
-        <section className="cats max-w-[1600px] mx-auto" aria-label="Browse by food type" >
+        <section
+            className="cats max-w-[1600px] mx-auto" aria-label="Browse by food type" >
             {/* Heading */}
             <div className="mb-5">
                 <h1 className="text-2xl font-semibold text-gray-900 sm:text-3xl">Restaurants near you</h1>

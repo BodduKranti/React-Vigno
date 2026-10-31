@@ -25,6 +25,7 @@ export const ROUTES = Object.freeze({
     GET_SHOT_ITEMS_BY_ID: "/shop/shopitems/getItemById",
     DELETE_SHOT_ITEM_BY_ID: "/shop/shopitems/deleteItemById",
     GET_ALL_SHOP_ITEM_BY_CITY: "/shop/shopitems/getallitemsBycity",
+    GET_CATE_ITEMS_BY_CAT: "/shop/shopitems/getcateitmeByCat"
 });
 
 

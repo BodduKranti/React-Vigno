@@ -188,3 +188,19 @@ export const getshopItemsbyCity = async (req, res) => {
         })
     }
 }
+
+export const getCategoryItemsbyCategoryname = async (req, res) => {
+    try {
+        const cat = req.params.cat
+        console.log('cat', cat)
+
+        // shop data 
+        const shop = await Shop.find({ owner: req.userId })
+        console.log('shop cate', shop)
+
+
+    }
+    catch (error) {
+
+    }
+}

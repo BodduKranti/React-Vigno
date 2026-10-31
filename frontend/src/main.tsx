@@ -11,6 +11,7 @@ import "swiper/css/pagination";
 import "swiper/css/effect-fade";
 import { ToastContainer } from 'react-toastify'
 import ProviderRedux from './Providers/ReduxProvider.tsx'
+import "leaflet/dist/leaflet.css"
 
 createRoot(document.getElementById('root')!).render(
     <>

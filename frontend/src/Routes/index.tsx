@@ -13,6 +13,9 @@ import Unauthorized from "../Pages/Unauthorized/Unauthorized";
 import AddShop from "../Pages/Owner/AddShop/AddShop";
 import Cart from "../Pages/Cart/Cart";
 import RestaurantDetails from "../Pages/Restaurant/RestaurantDetails";
+import Category from "../Pages/Category/Category";
+import Checkout from "../Pages/Checkout/Checkout";
+import Ordered from "../Pages/Order/Ordered";
 
 
 export const pageRoutes = createBrowserRouter([
@@ -32,6 +35,9 @@ export const pageRoutes = createBrowserRouter([
             { path: "/restaurants", element: <Restaurant /> },
             { path: "/restaurants/:shop", element: <RestaurantDetails /> },
             { path: "/cart", element: <Cart /> },
+            { path: "/category/:cat", element: <Category /> },
+            { path: "/checkout", element: <Checkout /> },
+            { path: "/order", element: <Ordered /> },
         ],
     },
     {

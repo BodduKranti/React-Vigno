@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router"
 import Button from "../../components/field/Button"
 import type { cartitemsprops } from "../../Store/Reducer/AuthSlice/UserSlice"
 
@@ -27,6 +28,8 @@ const OrderSummary = ({ cartItems }: ordersummaryprops) => {
     const progress = Math.min(100, (subtotal / FREE_DELIVERY_AT) * 100)
     const gst = Math.round(subtotal * GST_RATE)
     const total = subtotal + delivery + gst
+
+    const navigate = useNavigate()
 
     return (
         <aside className="rounded-3xl border border-orange-100 bg-white p-5 shadow-sm lg:sticky lg:top-6">
@@ -64,6 +67,7 @@ const OrderSummary = ({ cartItems }: ordersummaryprops) => {
                 btnTxt={"Proceed to checkout"}
                 type="button"
                 className={`font-semibold w-full`}
+                onClick={() => navigate('/checkout')}
             />
         </aside>
     )
