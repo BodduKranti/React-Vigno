@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { MapAddressThunkController } from "../../StoreThunk/MapAddressThunk";
+import { MapAddressThunkController, maplocationSearchthunkController } from "../../StoreThunk/MapAddressThunk";
 
 
 
@@ -12,7 +12,8 @@ const mapSlice = createSlice({
         },
         address: null,
         isLoading: false,
-        isError: ''
+        isError: '',
+        searhlist: null
     },
     reducers: {
         //get the lat and lon value from the useCity
@@ -38,6 +39,11 @@ const mapSlice = createSlice({
             .addCase(MapAddressThunkController.rejected, (state, action) => {
                 state.isLoading = false
                 state.isError = action.payload
+            })
+
+            //search location
+            .addCase(maplocationSearchthunkController.fulfilled, (state, action) => {
+                state.searhlist = action.payload
             })
     }
 })

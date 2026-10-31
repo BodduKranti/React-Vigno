@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
-
+import L from 'leaflet';
 import { useAppDispatch } from '../../Store/hook';
 import { MapAddressThunkController } from '../../Store/StoreThunk/MapAddressThunk';
 import { setLocation } from '../../Store/Reducer/MapSlice/MapSlice';
@@ -13,6 +13,20 @@ export interface LocationPos {
 interface MapProps {
     location: LocationPos;
 }
+
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+
+const defaultIcon = L.icon({
+    iconUrl: markerIcon,
+    iconRetinaUrl: markerIcon2x,
+    shadowUrl: markerShadow,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+});
 
 function RecenterMap({ position }: { position: LocationPos }) {
     const map = useMap();
@@ -70,6 +84,7 @@ const Map = ({ location }: MapProps) => {
                     draggable
                     ref={markerRef}
                     eventHandlers={eventHandlers}
+                    icon={defaultIcon}
                 >
                     <Popup>Current location</Popup>
                 </Marker>

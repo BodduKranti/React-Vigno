@@ -16,6 +16,14 @@ export const AxiosGetolocation = axios.create({
     }
 })
 
+// from the below we can get url for the geolocation search
+export const AxiosGetolocationsearch = axios.create({
+    baseURL: import.meta.env.VITE_GEOLOCATION_SEARCH_API_URL,
+    headers: {
+        "Content-Type": "application/json"
+    }
+})
+
 // from the below we can get url for the geolocation
 export const AxiosFormData = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
