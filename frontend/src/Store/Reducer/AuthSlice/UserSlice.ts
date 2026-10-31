@@ -55,11 +55,11 @@ const userAuthSlice = createSlice({
 
         //Add cartitems
         addCart: (state, action: PayloadAction<cartitemsprops>) => {
-            const qty = action.payload.quantity ?? 1
+            const qty = (action.payload.quantity ?? 1)
 
             const existing = state.cartItems.find((i) => i?._id === action.payload?._id)
             if (existing) {
-                existing.quantity = existing.quantity ?? 1 + qty
+                existing.quantity = existing.quantity! + 1
             } else {
                 state.cartItems.push({ ...action.payload, quantity: qty })
             }
