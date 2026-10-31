@@ -4,7 +4,7 @@ import PageTitleWithMetaDetails from '../../Layout/PageTileWithMeta'
 
 const CheckOutForm = () => {
 
-    const { register, handleSubmit } = useForm({
+    const { handleSubmit } = useForm({
         mode: 'onBlur',
         defaultValues: {
 
