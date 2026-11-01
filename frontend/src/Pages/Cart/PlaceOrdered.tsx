@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router"
 import Button from "../../components/field/Button"
 import type { cartitemsprops } from "../../Store/Reducer/AuthSlice/UserSlice"
 
@@ -28,7 +27,7 @@ const PlaceOrdered = ({ cartItems }: PlaceOrderprops) => {
     const gst = Math.round(subtotal * GST_RATE)
     const total = subtotal + delivery + gst
 
-    const navigate = useNavigate()
+    // const navigate = useNavigate()
 
     return (
         <aside className="rounded-3xl border border-orange-100 bg-white p-5 shadow-sm lg:sticky lg:top-6 mt-5">

@@ -39,9 +39,25 @@ const PamentSection = () => {
                             onClick={() => setPayment(p?.paymentmode!)}
                             className={`w-full border border-gray-600 
                                 ${payment === p?.paymentmode ? 'bg-orange-500 text-white border-orange-500' : ''} 
-                                flex justify-center gap-2 items-center py-2 px-4 rounded-3xl`}>
-                            <span>{p?.icon}</span>
-                            <label>{p?.name}</label>
+                                 py-2 px-4 rounded-3xl`}>
+                            <div className="flex justify-center gap-2 items-center">
+                                <span>{p?.icon}</span>
+                                <label>{p?.name}</label>
+                            </div>
+
+                            {
+                                p?.paymentmode === 'cod' && <div className="text-xs text-gray-600 flex flex-col items-center justify-center w-full">
+                                    <p>Cash on delivery</p>
+                                    <p>Pay when food arrives</p>
+                                </div>
+                            }
+
+                            {
+                                p?.paymentmode === 'upi' && <div className="text-xs text-gray-600 flex flex-col items-center justify-center w-full">
+                                    <p>Pay online</p>
+                                </div>
+                            }
+
                         </div>
                     </>
                     ))

@@ -3,7 +3,6 @@ import NoitemShopfound from '../../components/NoitemShopfound'
 import { useAppDispatch, useAppSelecter } from '../../Store/hook'
 import { addCart, deleteCart, removeCart } from '../../Store/Reducer/AuthSlice/UserSlice'
 import OrderPlaceCartItem from './OrderPlaceCartItem'
-import OrderSummary from './OrderSummary'
 import PlaceOrdered from './PlaceOrdered'
 
 const OrderPlaceandPaymentsection = () => {
