@@ -12,7 +12,6 @@ const DeliveryLocation = () => {
     const { location, address, searhlist } = useAppSelecter((state) => state.map)
     const [search, setSearch] = useState<string>('')
     const searchList = Array.isArray(searhlist)! && searhlist || []
-    console.log(' searchList', searchList)
     const debounceRef = useRef<any>(null)
     const handleSearch = (e: any) => {
         const values = e.target.value
@@ -121,6 +120,7 @@ const DeliveryLocation = () => {
                     </button>
                 </div>
 
+                {/* Search text after three charactors then only its shows */}
                 {
                     searchList.length > 0 &&
 
@@ -146,7 +146,6 @@ const DeliveryLocation = () => {
                     </div>
                 }
             </div>
-
 
 
             {/* Map */}

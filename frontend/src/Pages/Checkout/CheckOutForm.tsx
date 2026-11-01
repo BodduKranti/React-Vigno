@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form'
 import DeliveryLocation from './DeliveryLocation'
 import PageTitleWithMetaDetails from '../../Layout/PageTileWithMeta'
+import PamentSection from './PamentSection'
 
 const CheckOutForm = () => {
 
@@ -21,6 +22,8 @@ const CheckOutForm = () => {
             className='w-full'
         >
             <DeliveryLocation />
+
+            <PamentSection />
             <form
                 className='w-full'
                 onSubmit={handleSubmit(checkoutForm)}

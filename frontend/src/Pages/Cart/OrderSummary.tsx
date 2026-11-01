@@ -60,8 +60,6 @@ const OrderSummary = ({ cartItems }: ordersummaryprops) => {
                 <span className="text-2xl font-bold tabular-nums text-zinc-900">{inr(total)}</span>
             </div>
 
-
-
             <Button
                 btnColor="warning"
                 btnTxt={"Proceed to checkout"}
