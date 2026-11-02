@@ -80,8 +80,8 @@ const itemImage = (i: OrderItem) => i.item?.image ?? i.item?.image
 const itemName = (i: OrderItem) => i.name ?? i.item?.name ?? "Item"
 const UserOrderCardItem = ({ items: o }: UserOrderCardItem) => {
     console.log('o order list item', o)
-    const [open, setOpen] = useState<string | null>(null)
-    const isOpen = open === o._id
+    // const [open, setOpen] = useState<string | null>(null)
+    // const isOpen = open === o._id
     const allItems = o.shopOrder.flatMap((s) => s.shopOrderItems ?? [])
     const itemCount = allItems.reduce((n, i) => n + i.quantity, 0)
 
@@ -92,7 +92,7 @@ const UserOrderCardItem = ({ items: o }: UserOrderCardItem) => {
         <li key={o._id} className="ov-card flex flex-col">
             <button
                 className="ov-summary bg-[#f8804d]! text-white!"
-                aria-expanded={isOpen}
+            // aria-expanded={isOpen}
             // onClick={() => setOpen(isOpen ? null : o._id)}
             >
                 <span className="ov-stack">
