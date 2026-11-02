@@ -1,5 +1,5 @@
 import { ROUTES } from "../type";
-import { useDeleteApi, useGetApi, usePostFormApi, usePutFormApi } from "./useAxiosServices";
+import { useDeleteApi, useGetApi, usePostApi, usePostFormApi, usePutFormApi } from "./useAxiosServices";
 
 // route function
 export const createShop = () => usePostFormApi()
@@ -10,3 +10,6 @@ export const getShop = () => useGetApi(ROUTES.GET_SHOP)
 export const createshopItems = () => usePostFormApi()
 export const updateShopItems = () => usePutFormApi()
 export const deleteShopItems = () => useDeleteApi()
+
+//shop order
+export const placeOrderShop = () => usePostApi()

@@ -1,5 +1,6 @@
 import { ChevronDown, LogOut, UserRound } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { NavLink } from 'react-router';
 interface profileItemsprops {
     icon: any,
     name: string,
@@ -60,14 +61,16 @@ const UserProfile = ({ isFetching, user, profileItems, logout }: {
                             const Icon = item.icon;
 
                             return (
-                                <a
+                                <NavLink
                                     key={item.name}
-                                    href={item.href}
-                                    className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-gray-700 transition hover:bg-orange-50 hover:text-orange-600"
+                                    to={item.href}
+                                    className={({ isActive }) => `flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-gray-700 
+                                    transition hover:bg-orange-50 hover:text-orange-600 ${isActive ? 'bg-orange-50 text-orange-600' : ''}
+                                    `}
                                 >
                                     <Icon size={19} />
                                     {item.name}
-                                </a>
+                                </NavLink>
                             );
                         })}
                     </div>

@@ -8,6 +8,7 @@ import userRoutes from './src/routes/user.routes.js';
 import cors from 'cors'
 import shopRoutes from './src/routes/shop.route.js';
 import shopItemrouts from './src/routes/shopitems.route.js';
+import orderroute from './src/routes/order.route.js';
 
 
 const app = express();
@@ -26,6 +27,7 @@ app.use("/api/auth", authRouter)
 app.use("/api/user", userRoutes)
 app.use("/api/shop", shopRoutes)
 app.use("/api/shop/shopitems", shopItemrouts)
+app.use("/api/shop/order", orderroute)
 
 app.listen(ENV.PORT, () => {
     dbConnect()

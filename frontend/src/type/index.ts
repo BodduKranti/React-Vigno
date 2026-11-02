@@ -25,7 +25,16 @@ export const ROUTES = Object.freeze({
     GET_SHOT_ITEMS_BY_ID: "/shop/shopitems/getItemById",
     DELETE_SHOT_ITEM_BY_ID: "/shop/shopitems/deleteItemById",
     GET_ALL_SHOP_ITEM_BY_CITY: "/shop/shopitems/getallitemsBycity",
-    GET_CATE_ITEMS_BY_CAT: "/shop/shopitems/getcateitmeByCat"
+    GET_CATE_ITEMS_BY_CAT: "/shop/shopitems/getcateitmeByCat",
+
+    //shop order
+    CREAT_SHOP_ORDER: "/shop/order/place-order",
+
+    //USER ORDER
+    GET_USER_ORDERS: "/shop/order/getMyOrder",
+
+    //OWNER ORDER
+    GET_OWNER_ORDER: "/shop/order/getOwnerOrder"
 });
 
 
@@ -56,3 +65,5 @@ export enum itemFoodType {
     "no-veg" = "Non Vegetrian",
     "veg" = "Vegeterian"
 }
+
+export type Status = "pending" | "preparing" | "out for delivery" | "delivered" | "cancelled"

@@ -1,4 +1,5 @@
 import AsideLoginRegister from "../../../components/AsideLoginRegister"
+import PageTitleWithMetaDetails from "../../../Layout/PageTileWithMeta"
 import LoginForm from "./LoginForm"
 
 const Login = () => {
@@ -12,4 +13,4 @@ const Login = () => {
     )
 }
 
-export default Login
+export default PageTitleWithMetaDetails(Login, 'Login', '')

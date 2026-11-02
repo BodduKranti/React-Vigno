@@ -1,4 +1,5 @@
 import Button from "../../components/field/Button"
+import LoaderSpin from "../../components/LoaderSpin"
 import type { cartitemsprops } from "../../Store/Reducer/AuthSlice/UserSlice"
 
 const FREE_DELIVERY_AT = 499
@@ -6,7 +7,10 @@ const DELIVERY_FEE = 40
 const GST_RATE = 0.05
 
 interface PlaceOrderprops {
-    cartItems: cartitemsprops[]
+    cartItems: cartitemsprops[],
+    paymentPlace: (values: any) => void,
+    paymentmod: string,
+    loader: boolean
 }
 
 
@@ -20,7 +24,7 @@ const Row = ({ label, value, accent }: { label: string; value: string; accent?: 
     </div>
 )
 
-const PlaceOrdered = ({ cartItems }: PlaceOrderprops) => {
+const PlaceOrdered = ({ cartItems, paymentPlace, paymentmod, loader }: PlaceOrderprops) => {
     const totalQty = cartItems?.reduce((s, i) => s + (i.quantity ?? 1), 0)
     const subtotal = cartItems?.reduce((prev, curr) => prev + curr.price * (curr?.quantity ?? 1), 0)
     const delivery = subtotal === 0 || subtotal >= FREE_DELIVERY_AT ? 0 : DELIVERY_FEE
@@ -28,6 +32,8 @@ const PlaceOrdered = ({ cartItems }: PlaceOrderprops) => {
     const total = subtotal + delivery + gst
 
     // const navigate = useNavigate()
+
+    console.log(' paymentmod', paymentmod)
 
     return (
         <aside className="rounded-3xl border border-orange-100 bg-white p-5 shadow-sm lg:sticky lg:top-6 mt-5">
@@ -46,10 +52,10 @@ const PlaceOrdered = ({ cartItems }: PlaceOrderprops) => {
 
             <Button
                 btnColor="warning"
-                btnTxt={"Proceed to Pay"}
+                btnTxt={loader ? <LoaderSpin /> : paymentmod === 'cod' ? "Place Order" : "Pay & Place order"}
                 type="button"
                 className={`font-semibold w-full`}
-            // onClick={() => navigate('/checkout')}
+                onClick={() => paymentPlace(total)}
             />
         </aside>
     )

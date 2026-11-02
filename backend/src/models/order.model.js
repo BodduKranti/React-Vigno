@@ -7,6 +7,7 @@ const shopOrderItemSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "ShopItems"
     },
+    name: String,
     price: Number,
     quantity: Number
 }, {
@@ -26,7 +27,12 @@ const shopOrderSchema = new mongoose.Schema({
     subTotal: {
         type: Number
     },
-    shopOrderItems: [shopOrderItemSchema]
+    shopOrderItems: [shopOrderItemSchema],
+    status: {
+        type: String,
+        enum: ['pending', 'preparing', 'out of delivery', 'delivered'],
+        default: 'pending'
+    }
 }, {
     timestamps: true
 })

@@ -1,4 +1,5 @@
 import AsideLoginRegister from "../../../components/AsideLoginRegister"
+import PageTitleWithMetaDetails from "../../../Layout/PageTileWithMeta"
 import RegisterForm from "./RegisterForm"
 
 const Regsiter = () => {
@@ -10,4 +11,4 @@ const Regsiter = () => {
     )
 }
 
-export default Regsiter
+export default PageTitleWithMetaDetails(Regsiter, 'Register', '')

@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
-import { getUserfun } from '../../StoreThunk/GetUserThunk'
+import { getOwnerOrder, getUserfun, getuserOrder } from '../../StoreThunk/GetUserThunk'
 
 export interface cartitemsprops {
     _id: string,
@@ -19,7 +19,8 @@ interface userAuth {
     error: any,
     role: string,
     isAuthenitcate: boolean,
-    cartItems: cartitemsprops[]
+    cartItems: cartitemsprops[],
+    order: any[]
 }
 
 // interface userToken extends userAuth {
@@ -33,7 +34,8 @@ const inititalValue: userAuth = {
     error: '',
     role: '',
     isAuthenitcate: false,
-    cartItems: []
+    cartItems: [],
+    order: []
 }
 
 const userAuthSlice = createSlice({
@@ -71,6 +73,9 @@ const userAuthSlice = createSlice({
         deleteCart: (state, action: PayloadAction<string>) => {
             state.cartItems = state.cartItems.filter((i) => i._id !== action.payload)
         },
+        clearCart: (state) => {
+            state.cartItems = []
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -90,8 +95,26 @@ const userAuthSlice = createSlice({
                 state.error = action?.payload?.message || ''
                 state.isAuthenitcate = false
             })
+
+            //user odered
+            .addCase(getuserOrder.fulfilled, (state, action) => {
+                state.order = action.payload
+                state.loading = false
+            })
+
+            //Owner Order
+            .addCase(getOwnerOrder.fulfilled, (state, action) => {
+                state.order = action.payload
+            })
     }
 })
 
-export const { setUser, logout, addCart, removeCart, deleteCart } = userAuthSlice.actions;
+export const {
+    setUser,
+    logout,
+    addCart,
+    removeCart,
+    deleteCart,
+    clearCart
+} = userAuthSlice.actions;
 export default userAuthSlice.reducer

@@ -9,10 +9,13 @@ const getMyshopdataSlice = createSlice({
         loader: false,
         error: '',
         shopgetbyIditems: null,
-        ShopDetailsbyShopid: null
+        ShopDetailsbyShopid: null,
+        paymentmothod: 'cod'
     },
     reducers: {
-
+        setPaymentMothod: (state, action) => {
+            state.paymentmothod = action.payload
+        }
     },
     extraReducers: (build) => {
         build
@@ -61,5 +64,5 @@ const getMyshopdataSlice = createSlice({
         // get cate items
     }
 })
-
+export const { setPaymentMothod } = getMyshopdataSlice.actions
 export default getMyshopdataSlice.reducer

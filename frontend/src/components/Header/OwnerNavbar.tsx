@@ -11,7 +11,7 @@ import {
 import { BsShop } from "react-icons/bs";
 import { toast } from "react-toastify";
 import { logoutUserfun } from "../../hooks/useGetuser";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useAppDispatch } from "../../Store/hook";
 import { logout } from "../../Store/Reducer/AuthSlice/UserSlice";
 import UserProfile from "../UserProfile/UserProfile";
@@ -21,10 +21,11 @@ import Logo from "../Logo";
 
 export default function OwnerNavbar({ user }: { user: any }) {
     const dispatch = useAppDispatch()
+    const navigate = useNavigate()
 
     const profileItems = [
         { name: "My Shop", href: "/role/owner/addshop", icon: BsShop },
-        { name: "My Orders", href: "/orders", icon: ClipboardList },
+        { name: "My Orders", href: "/view-order", icon: ClipboardList },
         { name: "Favorites", href: "/favorites", icon: Heart },
         { name: "Addresses", href: "/addresses", icon: MapPinned },
         { name: "Payments", href: "/payments", icon: CreditCard },
@@ -76,7 +77,8 @@ export default function OwnerNavbar({ user }: { user: any }) {
 
 
                         <div
-                            className="relative flex items-center gap-3 rounded-xl p-2 bg-orange-100 text-orange-600  hover:bg-orange-50"
+                            onClick={() => navigate('/view-order')}
+                            className="relative flex items-center cursor-pointer gap-3 rounded-xl p-2 bg-orange-100 text-orange-600  hover:bg-orange-50"
                         >
                             <ConciergeBell size={20} /> My order
                             {cartCount > 0 && (

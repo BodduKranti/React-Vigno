@@ -3,6 +3,7 @@ import NoitemShopfound from "../../components/NoitemShopfound"
 import { useAppSelecter } from "../../Store/hook"
 import CartList from "./CartList"
 import OrderSummary from "./OrderSummary"
+import PageTitleWithMetaDetails from "../../Layout/PageTileWithMeta"
 
 const Cart = () => {
     const { cartItems } = useAppSelecter((state) => state.userInfo)
@@ -39,4 +40,4 @@ const Cart = () => {
     )
 }
 
-export default Cart
+export default PageTitleWithMetaDetails(Cart, 'Cart', '')

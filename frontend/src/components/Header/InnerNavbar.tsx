@@ -39,7 +39,7 @@ export default function InnerNavbar({ user }: { user: any }) {
     const cartCount = 3;
 
     const profileItems = [
-        { name: "My Orders", href: "/orders", icon: ClipboardList },
+        { name: "My Orders", href: "/view-order", icon: ClipboardList },
         { name: "Favorites", href: "/favorites", icon: Heart },
         { name: "Addresses", href: "/addresses", icon: MapPinned },
         { name: "Payments", href: "/payments", icon: CreditCard },
@@ -62,10 +62,11 @@ export default function InnerNavbar({ user }: { user: any }) {
         }
     }
 
-    console.log('cartItems', cartItems)
     return (
         <>
-            <header className="sticky top-0 z-9999 w-full border-b border-gray-100 bg-white shadow-sm">
+            <header className="sticky top-0 
+            z-50 
+            w-full border-b border-gray-100 bg-white shadow-sm">
                 {/* Desktop and tablet navbar */}
                 <div className="mx-auto hidden max-w-[1600px] items-center gap-5 px-6 py-4 lg:flex xl:gap-7">
                     {/* Logo */}
@@ -152,14 +153,14 @@ export default function InnerNavbar({ user }: { user: any }) {
                                 {mobileOpen ? <X size={25} /> : <Menu size={25} />}
                             </button>
 
-                            <a href="/" className="flex items-center gap-2">
+                            <Link to="/" className="flex items-center gap-2">
                                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500 text-white">
                                     <Utensils size={23} />
                                 </div>
                                 <h1 className="text-xl font-extrabold tracking-tight text-gray-900">
                                     Quick<span className="text-orange-500">Bite</span>
                                 </h1>
-                            </a>
+                            </Link>
                         </div>
 
                         <div className="w-auto flex items-center gap-3">

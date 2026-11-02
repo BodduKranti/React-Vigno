@@ -1,4 +1,5 @@
 import AsideLoginRegister from '../../../components/AsideLoginRegister'
+import PageTitleWithMetaDetails from '../../../Layout/PageTileWithMeta'
 import ForgotPasswordFlow from './ForgotPasswordFlow'
 const ForgotPassword = () => {
     return (
@@ -9,4 +10,4 @@ const ForgotPassword = () => {
     )
 }
 
-export default ForgotPassword
+export default PageTitleWithMetaDetails(ForgotPassword, 'Forgot-Password', '')

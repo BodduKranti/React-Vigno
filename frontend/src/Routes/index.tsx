@@ -16,6 +16,7 @@ import RestaurantDetails from "../Pages/Restaurant/RestaurantDetails";
 import Category from "../Pages/Category/Category";
 import Checkout from "../Pages/Checkout/Checkout";
 import Ordered from "../Pages/Order/Ordered";
+import ViewOrdered from "../Pages/Order/ViewOrdered";
 
 
 export const pageRoutes = createBrowserRouter([
@@ -38,6 +39,12 @@ export const pageRoutes = createBrowserRouter([
             { path: "/category/:cat", element: <Category /> },
             { path: "/checkout", element: <Checkout /> },
             { path: "/order", element: <Ordered /> },
+        ],
+    },
+    {
+        element: <PrivateRoute allowRoles={["owner", "user"]} />,
+        children: [
+            { path: "/view-order", element: <ViewOrdered /> },
         ],
     },
     {

@@ -1,3 +1,4 @@
+import PageTitleWithMetaDetails from "../../Layout/PageTileWithMeta"
 import CheckOutForm from "./CheckOutForm"
 import PlaceOrder from "./PlaceOrder"
 
@@ -21,4 +22,4 @@ const Checkout = () => {
     )
 }
 
-export default Checkout
+export default PageTitleWithMetaDetails(Checkout, 'Checkout', '')

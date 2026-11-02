@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosInstance } from "../../services";
 import { ROUTES } from "../../type";
+import { queryClient } from "../../Providers/QueryClientProviders";
 interface UserAuth {
     fullname: string;
     email: string;
@@ -19,3 +20,29 @@ export const getUserfun = createAsyncThunk<UserAuth, void, { rejectValue: string
         }
     }
 );
+
+export const getuserOrder = createAsyncThunk<any, void, { rejectValue: string }>('user/order', async (_, { rejectWithValue, signal }) => {
+    try {
+        const res: any = await queryClient.fetchQuery({
+            queryKey: ['user', 'order'],
+            queryFn: () => AxiosInstance.get(ROUTES.GET_USER_ORDERS, { withCredentials: true, signal }),
+            staleTime: 0
+        })
+        return res.data
+    } catch (error: any) {
+        rejectWithValue(error?.response?.data?.message)
+    }
+})
+
+export const getOwnerOrder = createAsyncThunk<any, void, { rejectValue: string }>('Owner/order', async (_, { rejectWithValue, signal }) => {
+    try {
+        const res: any = await queryClient.fetchQuery({
+            queryKey: ['user', 'order'],
+            queryFn: () => AxiosInstance.get(ROUTES.GET_OWNER_ORDER, { withCredentials: true, signal }),
+            staleTime: 0
+        })
+        return res.data
+    } catch (error: any) {
+        rejectWithValue(error?.response?.data?.message)
+    }
+})

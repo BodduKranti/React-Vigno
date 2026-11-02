@@ -16,7 +16,6 @@ const BestShop = () => {
 
     const { data, isLoading } = useGetApi(`${ROUTES.GET_SHOPS_BY_CITY}/${city}`, undefined, !!city);
     const shopList = Array.isArray(data) && data || []
-    console.log('data', data)
     return (
         <section
             className="cats max-w-[1600px] mx-auto" aria-label="Browse by food type" >
