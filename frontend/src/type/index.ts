@@ -67,3 +67,8 @@ export enum itemFoodType {
 }
 
 export type Status = "pending" | "preparing" | "out for delivery" | "delivered" | "cancelled"
+
+export enum paymentMethods {
+    "cod" = "Cash On Delivery",
+    "online" = "Online Payment"
+}

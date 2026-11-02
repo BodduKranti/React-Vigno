@@ -1,10 +1,196 @@
-interface OwnerOrderCardItemsprops {
-    items: any
+import { useState } from "react"
+import { paymentMethods, type Status } from "../../../type"
+
+// interface OwnerOrderCardItemsprops {
+//     items: any
+// }
+
+
+interface OrderItem {
+    quantity: number
+    price: number
+    name?: string
+    item?: { name?: string; image?: string }
 }
-const OwnerOrderCardItems = ({ items }: OwnerOrderCardItemsprops) => {
-    console.log('items', items)
+interface OwnerOrder {
+    _id: string
+    createdAt?: string
+    paymentMethod?: string | undefined
+    user: { fullname: string; email?: string; mobile?: string }
+    deliveryAddress?: { text: string; latitude?: number; longitude?: number }
+    shopOrder: [{
+        _id: string
+        status: Status
+        subTotal?: number
+        shopOrderItems: OrderItem[]
+    }]
+}
+interface Props {
+    items: OwnerOrder
+    // Call your API here, return a promise so the card can show "Saving…"
+    onStatusChange?: (orderId: string, shopOrderId: string, status: Status) => Promise<void> | void
+}
+
+const STATUSES: Status[] = ["pending", "preparing", "out for delivery", "delivered", "cancelled"]
+
+const money = (n = 0) =>
+    new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(n)
+
+const timeText = (d?: string) =>
+    d ? new Date(d).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }) : ""
+
+const initials = (name: string) =>
+    name.split(" ").filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("")
+
+const Thumb = ({ src, label }: { src?: string; label: string }) => {
+    const [failed, setFailed] = useState(false)
+    return src && !failed ? (
+        <img src={src} alt={label} loading="lazy" onError={() => setFailed(true)} />
+    ) : (
+        <span className="oc-fallback" aria-hidden="true">{label.charAt(0).toUpperCase()}</span>
+    )
+}
+const OwnerOrderCardItems = ({ items: order }: Props) => {
+    console.log('items', order)
+    const { user, shopOrder, deliveryAddress: addr } = order
+    const [statuses, setStatuses] = useState<Record<string, Status>>({})
+    const mapsUrl =
+        addr?.latitude !== undefined && addr?.longitude !== undefined
+            ? `https://www.google.com/maps?q=${addr.latitude},${addr.longitude}`
+            : undefined
+    const [saving, setSaving] = useState(false)
+
+
     return (
-        <div>OwnerOrderCardItems</div>
+        shopOrder?.map((s) => {
+            const change = async (shopOrderId: string, next: Status) => {
+
+                const currentStatus =
+                    statuses[shopOrderId] ??
+                    shopOrder.find((s) => s._id === shopOrderId)?.status ??
+                    "pending"
+
+                if (next === currentStatus) return
+
+                // Update only the selected shop order
+                setStatuses((prev) => ({
+                    ...prev,
+                    [shopOrderId]: next
+                }))
+                setSaving(true)
+                try {
+                    setSaving(false)
+                } catch (error) {
+
+                }
+                // setSavingIds((prev) => [...prev, shopOrderId])
+
+                // try {
+                //     await onStatusChange?.(order._id, shopOrderId, next)
+                // } catch (error) {
+                //     // Rollback if API fails
+                //     setStatuses((prev) => ({
+                //         ...prev,
+                //         [shopOrderId]: currentStatus
+                //     }))
+
+                //     console.error("Status update failed:", error)
+                // } finally {
+                //     setSavingIds((prev) =>
+                //         prev.filter((id) => id !== shopOrderId)
+                //     )
+                // }
+            }
+            const currentStatus = statuses[s._id] ?? s.status
+
+            const closed =
+                currentStatus === "delivered" ||
+                currentStatus === "cancelled"
+
+            return (
+                <article key={s._id} className={`w-full! oc s-${currentStatus.replace(/\s/g, "-")}`}>
+                    {/*USer details*/}
+                    <header className="oc-head">
+                        <span className="oc-avatar" aria-hidden="true">{initials(user.fullname)}</span>
+                        <div className="oc-who">
+                            <h3>{user.fullname}</h3>
+                            <small>
+                                Order #{s._id.slice(-6)}
+                                {order.createdAt && ` · ${timeText(order.createdAt)}`}
+                            </small>
+                        </div>
+                        <span className="oc-pill">{currentStatus}</span>
+                    </header>
+
+                    <div className="oc-contact">
+                        {user.mobile && (
+                            <a href={`tel:${user.mobile}`}>
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11 11 0 0 0 3.6.6 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.6 3.6a1 1 0 0 1-.25 1z" /></svg>
+                                {user.mobile}
+                            </a>
+                        )}
+                        {user.email && (
+                            <a href={`mailto:${user.email}`}>
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm9 7 8-5H4l8 5zm0 2L4 9v8h16V9l-8 5z" /></svg>
+                                {user.email}
+                            </a>
+                        )}
+                    </div>
+
+                    {addr && (
+                        <div className="oc-addr">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z" /></svg>
+                            <p>{addr.text}</p>
+                            {mapsUrl && <a href={mapsUrl} target="_blank" rel="noreferrer">Open in Maps</a>}
+                        </div>
+                    )}
+
+                    <ul className="oc-items">
+                        {s.shopOrderItems.map((i, idx) => {
+                            const name = i.name ?? i.item?.name ?? "Item"
+                            return (
+                                <li key={idx}>
+                                    <span className="oc-img">
+                                        <Thumb src={i.item?.image} label={name} />
+                                        <em>×{i.quantity}</em>
+                                    </span>
+                                    <b>{name}</b>
+                                    <small>{money(i.price)} each</small>
+                                </li>
+                            )
+                        })}
+                    </ul>
+
+                    <footer className="oc-foot">
+                        <label className="oc-update">
+                            <span>Update status</span>
+                            <select
+                                value={currentStatus}
+                                disabled={closed || saving}
+                                onChange={(e) =>
+                                    change(s._id, e.target.value as Status)
+                                }
+                            >
+                                {STATUSES.map((st) => (
+                                    <option key={st} value={st}>
+                                        {st}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
+                        <div className="oc-total">
+                            <small>{paymentMethods[order.paymentMethod as keyof typeof paymentMethods] ?? "Total"}</small>
+                            <strong>{money(s.subTotal)}</strong>
+                        </div>
+                    </footer>
+
+                    {/* <p className="oc-msg" role="status" aria-live="polite">
+                        {saving ? "Saving…" : error}
+                    </p> */}
+                </article>
+            )
+        })
+
     )
 }
 

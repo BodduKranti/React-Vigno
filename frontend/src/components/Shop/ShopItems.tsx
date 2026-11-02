@@ -30,9 +30,11 @@ const FoodTypeMark = ({ type }: { type: string }) => {
 const ShopItems = ({ item, onEdit, onDelete }: Props) => {
     const isVeg = item.foodtype === "veg"
     return (
-        <div className="group flex flex-col overflow-hidden rounded-3xl border border-orange-400 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-orange-100">
+        <div className="group flex flex-col overflow-hidden shadow-md 
+        rounded-3xl border border-orange-400 bg-white  transition 
+        duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-orange-100">
             {/* Image */}
-            <div className="relative h-48 w-full overflow-hidden bg-orange-50">
+            <div className="relative h-35 md:h-38 w-full overflow-hidden bg-orange-50">
                 {item.image ? (
                     <img
                         src={item.image}
@@ -87,7 +89,7 @@ const ShopItems = ({ item, onEdit, onDelete }: Props) => {
 
             {/* Body */}
             <div className="flex flex-1 flex-col p-4">
-                <h3 className="truncate text-lg font-bold capitalize text-gray-900" title={item.name}>
+                <h3 className="truncate text-sm md:text-lg font-bold capitalize text-gray-900" title={item.name}>
                     {item.name}
                 </h3>
 
@@ -95,7 +97,7 @@ const ShopItems = ({ item, onEdit, onDelete }: Props) => {
                     {isVeg ? "Vegetarian" : "Non-vegetarian"}
                 </p>
 
-                <div className="mt-4 border-t border-dashed border-orange-100 pt-3">
+                <div className="mt-1 md:mt-2 border-t border-dashed border-orange-100 pt-3">
                     <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-400">Price</p>
                     <p className="text-2xl font-extrabold text-orange-600">
                         ₹{Number(item.price).toLocaleString("en-IN")}

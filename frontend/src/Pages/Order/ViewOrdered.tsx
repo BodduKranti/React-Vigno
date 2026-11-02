@@ -4,7 +4,7 @@ import { getOwnerOrder, getuserOrder } from "../../Store/StoreThunk/GetUserThunk
 import UserOrderCard from "./UserOrder/UserOrderCard"
 import OwnerOrderCard from "./OwnerOrder/OwnerOrderCard"
 import NoitemShopfound from "../../components/NoitemShopfound"
-import './ViewOrderlist.css'
+
 
 const ViewOrdered = () => {
     const dispatch = useAppDispatch()

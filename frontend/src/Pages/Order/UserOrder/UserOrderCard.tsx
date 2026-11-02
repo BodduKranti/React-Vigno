@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 import UserOrderCardItem from "./UserOrderCardItem"
-
+import '../ViewOrderlist.css'
 interface userOrderList {
     order: any
 }
