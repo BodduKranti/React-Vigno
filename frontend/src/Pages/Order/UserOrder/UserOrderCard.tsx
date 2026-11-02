@@ -20,7 +20,7 @@ const UserOrderCard = ({ order }: userOrderList) => {
     return (
         <div className="w-full">
             <p>{list?.length ?? 0} orders placed</p>
-            <ul className="ov-list mt-4 grid grid-cols-1 md:grid-cols-3">
+            <ul className="ov-list mt-4 grid grid-cols-1 md:grid-cols-2">
                 {
                     list?.map((items: any) => {
                         return <UserOrderCardItem items={items} key={items?._id} />

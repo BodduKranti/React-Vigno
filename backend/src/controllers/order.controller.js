@@ -118,7 +118,20 @@ export const getOwnerOrder = async (req, res) => {
                 }
             ]);
 
-        return res.status(200).json(ownerOrder);
+        const filteredOrder = ownerOrder.map((order) => ({
+            _id: order._id,
+            deliveryAddress: order?.deliveryAddress,
+            paymentMethod: order.paymentMethod,
+            user: order.user,
+            shopOrder: order.shopOrder.find(
+                (o) => String(o.owner?._id) === String(req.userId)
+            ),
+            createdAt: order.createdAt
+        }));
+
+        console.log(' filteredOrder', filteredOrder)
+
+        return res.status(200).json(filteredOrder);
 
     } catch (error) {
         console.error("Get owner order error:", error);

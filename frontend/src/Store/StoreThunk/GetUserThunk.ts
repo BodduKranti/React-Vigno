@@ -34,15 +34,18 @@ export const getuserOrder = createAsyncThunk<any, void, { rejectValue: string }>
     }
 })
 
-export const getOwnerOrder = createAsyncThunk<any, void, { rejectValue: string }>('Owner/order', async (_, { rejectWithValue, signal }) => {
-    try {
-        const res: any = await queryClient.fetchQuery({
-            queryKey: ['user', 'order'],
-            queryFn: () => AxiosInstance.get(ROUTES.GET_OWNER_ORDER, { withCredentials: true, signal }),
-            staleTime: 0
-        })
-        return res.data
-    } catch (error: any) {
-        rejectWithValue(error?.response?.data?.message)
+export const getOwnerOrder = createAsyncThunk<any, void, { rejectValue: string }>(
+    "owner/order",
+    async (_, { rejectWithValue, signal }) => {
+        try {
+            const res: any = await queryClient.fetchQuery({
+                queryKey: ["owner", "order"], // was ['user','order'], which clashes with the user thunk
+                queryFn: () => AxiosInstance.get(ROUTES.GET_OWNER_ORDER, { withCredentials: true, signal }),
+                staleTime: 0
+            })
+            return res.data
+        } catch (error: any) {
+            return rejectWithValue(error?.response?.data?.message ?? "Failed to load orders") // `return` was missing
+        }
     }
-})
+)
