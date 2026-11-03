@@ -1,0 +1,38 @@
+import mongoose from "mongoose";
+
+
+const deliveryAssignScenam = new mongoose.Schema({
+    order: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Order"
+    },
+    shop: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Shop"
+    },
+    shopOrderId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true
+    },
+    broadcastedTo: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        }
+    ],
+    assignedTo: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default: null
+    },
+    status: {
+        type: String,
+        enum: ['broadcasted', 'assigned', 'completed'],
+        default: 'broadcasted'
+    },
+    acceptedAt: Date
+
+}, { timestamps: true })
+
+const DeliveryAssign = mongoose.model('DeliveryAssign', deliveryAssignScenam)
+export default DeliveryAssign

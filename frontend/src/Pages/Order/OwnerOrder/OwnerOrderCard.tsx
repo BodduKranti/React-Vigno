@@ -5,7 +5,7 @@ import { ShopOrderStatus } from "../../../hooks/useShop"
 import { toast } from "react-toastify"
 import { ErrorAxios } from "../../../services/ErrorIntersects"
 import { useAppDispatch } from "../../../Store/hook"
-import { getMyOrder } from "../../../Store/StoreThunk/GetshopThunk"
+import { getOwnerOrder } from "../../../Store/StoreThunk/GetUserThunk"
 
 interface OwnerOrder {
     order: any,
@@ -28,7 +28,7 @@ const OwnerOrderCard = ({ order }: OwnerOrder) => {
             {
                 onSuccess: async () => {
                     toast.success("Order status changed successfully!");
-                    dispatch(getMyOrder()).unwrap();
+                    dispatch(getOwnerOrder()).unwrap();
 
                 },
 

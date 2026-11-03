@@ -173,21 +173,18 @@ export const updateOrderstatus = async (req, res) => {
         await order.save();
 
         // Return updated order with populated fields
-        const updatedOrder = await Order.findById(orderId)
-            .populate([
-                { path: "user", select: "fullname email mobile" },
-                { path: "shopOrder.shop", select: "name image" },
-                { path: "shopOrder.owner", select: "fullname email mobile" },
-                {
-                    path: "shopOrder.shopOrderItems.item",
-                    select: "name image price"
-                }
-            ]);
+        // const updatedOrder = await Order.findById(orderId)
+        //     .populate([
+        //         { path: "user", select: "fullname email mobile" },
+        //         { path: "shopOrder.shop", select: "name image" },
+        //         { path: "shopOrder.owner", select: "fullname email mobile" },
+        //         {
+        //             path: "shopOrder.shopOrderItems.item",
+        //             select: "name image price"
+        //         }
+        //     ]);
 
-        return res.status(200).json({
-            message: "Order status updated successfully",
-            order: updatedOrder
-        });
+        return res.status(200).json(shopOrder.status);
 
     } catch (error) {
         return res.status(500).json({

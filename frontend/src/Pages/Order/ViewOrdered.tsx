@@ -9,7 +9,6 @@ import NoitemShopfound from "../../components/NoitemShopfound"
 const ViewOrdered = () => {
     const dispatch = useAppDispatch()
     const { order, role } = useAppSelecter((state) => state.userInfo)
-    console.log('order', order)
 
     useEffect(() => {
         // dispatch(getuserOrder())

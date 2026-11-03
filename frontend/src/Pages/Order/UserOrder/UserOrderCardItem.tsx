@@ -54,7 +54,7 @@ const Thumb = ({ src, label, size = 42 }: { src?: string; label: string; size?: 
     )
 }
 
-const STEPS: Status[] = ["pending", "preparing", "out for delivery", "delivered"]
+const STEPS: Status[] = ["pending", "preparing", "out of delivery", "delivered"]
 const Tracker = ({ status }: { status: Status }) => {
     if (status === "cancelled") return <p className="ov-cancelled">This order was cancelled</p>
     const at = STEPS.indexOf(status)
