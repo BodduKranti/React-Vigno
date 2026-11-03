@@ -13,3 +13,6 @@ export const deleteShopItems = () => useDeleteApi()
 
 //shop order
 export const placeOrderShop = () => usePostApi()
+
+//shop order Status
+export const ShopOrderStatus = () => usePostApi()

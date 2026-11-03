@@ -22,7 +22,7 @@ export interface FoodItem {
 const ShopListItems = ({ items }: { items: FoodItem[] }) => {
     const [loader, setLoader] = useState<boolean>(false)
     const dispatch = useAppDispatch()
-    const { shopgetbyIditems } = useAppSelecter((state) => state.getMyshopdata)
+    const shopgetbyIditems = useAppSelecter((state) => state.getMyshopdata.shopgetbyIditems?.data)
 
     const [open, setOpen] = useState<any>({
         isOpen: false,
@@ -85,7 +85,7 @@ const ShopListItems = ({ items }: { items: FoodItem[] }) => {
 
 
     return (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 xl:grid-cols-5">
             {
                 items.map((items: FoodItem) => (<ShopItems
                     onEdit={foodItemFun}

@@ -9,7 +9,7 @@ import ShopSection from "../../components/Shop/ShopSection"
 
 const OwnerDashboard = () => {
     const dispatch = useAppDispatch()
-    const { myshopData: shopdata } = useAppSelecter((state) => state.getMyshopdata)
+    const shopdata = useAppSelecter((state) => state.getMyshopdata?.myshopData.data)
 
     useEffect(() => {
         dispatch(getShopData())

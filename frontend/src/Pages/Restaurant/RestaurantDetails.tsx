@@ -7,8 +7,10 @@ import RestaurantSection from "./RestaurantSection"
 const RestaurantDetails = () => {
     const dispatch = useAppDispatch()
     const { shop } = useParams<{ shop: any }>()
-    const { ShopDetailsbyShopid, loader } = useAppSelecter((state) => state.getMyshopdata)
+    const { data: ShopDetailsbyShopid, loading: loader } = useAppSelecter((state) => state.getMyshopdata?.ShopDetailsbyShopid)
     const { name, city, items, image, address } = ShopDetailsbyShopid! && ShopDetailsbyShopid || {}
+
+    console.log('/ShopDetailsbyShopid', ShopDetailsbyShopid)
 
     useEffect(() => {
         dispatch(getShopByShopIdThunk(shop))
@@ -16,8 +18,6 @@ const RestaurantDetails = () => {
     return (
         <div className="w-full">
             <RestaurantSection loader={loader} shopDts={{ name, city, image, address, items }} />
-
-
         </div>
     )
 }

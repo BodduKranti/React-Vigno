@@ -58,6 +58,7 @@ export const useGetApi = <T,>(
         queryKey: [URL, params],
         queryFn: () => apiRequest<T>("GET", URL, undefined, params,),
         enabled,
+        staleTime: Infinity,
     });
 };
 

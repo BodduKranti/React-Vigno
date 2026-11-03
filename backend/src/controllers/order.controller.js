@@ -143,81 +143,119 @@ export const getOwnerOrder = async (req, res) => {
     }
 };
 
-// export const getOwnerOrder = async (req, res) => {
-//     try {
 
-//         const ownerOrder = await Order.find({ "shopOrder.owner": req.userId })
-//             .sort({ createdAt: -1 })
-//             .populate([
-//                 { path: "shopOrder.shop", select: "name" },
-//                 { path: "User" },
-//                 { path: "shopOrder.shopOrderItems.item", select: "name image price" }
-//             ]);
+export const updateOrderstatus = async (req, res) => {
+    try {
+        const { orderId, shopId } = req.params;
+        const { status } = req.body;
 
-//         return res.status(200).json(ownerOrder)
+        const order = await Order.findById(orderId);
 
-//     } catch (error) {
-//         return res.status(500).json({ message: `Get owner order error ${error}` })
-//     }
-// }
+        if (!order) {
+            return res.status(404).json({
+                message: "Order not found"
+            });
+        }
+
+        const shopOrder = order.shopOrder.find(
+            (o) => String(o.shop) === String(shopId)
+        );
+
+        if (!shopOrder) {
+            return res.status(404).json({
+                message: "Shop order not found"
+            });
+        }
+
+        shopOrder.status = status;
+
+        // Save the parent order
+        await order.save();
+
+        // Return updated order with populated fields
+        const updatedOrder = await Order.findById(orderId)
+            .populate([
+                { path: "user", select: "fullname email mobile" },
+                { path: "shopOrder.shop", select: "name image" },
+                { path: "shopOrder.owner", select: "fullname email mobile" },
+                {
+                    path: "shopOrder.shopOrderItems.item",
+                    select: "name image price"
+                }
+            ]);
+
+        return res.status(200).json({
+            message: "Order status updated successfully",
+            order: updatedOrder
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "Order status update error",
+            error: error.message
+        });
+    }
+};
 
 
-// export const getMyOrder = async (req, res) => {
-//     try {
-//         const user = await User.findById(req.userId);
+export const user_owner_orderController = async (req, res) => {
+    try {
+        const userId = req.userId
+        const user = await User.findById(userId)
+        console.log('myorder user', user)
+        if (user?.role === ' user') {
+            const orders = await Order.find({ user: req.userId })
+                .sort({ createdAt: -1 })
+                .populate([
+                    { path: "shopOrder.shop", select: "name image" },
+                    { path: "shopOrder.owner", select: "fullname email mobile" },
+                    { path: "shopOrder.shopOrderItems.item", select: "name image price" }
+                ]);
 
-//         if (!user) {
-//             return res.status(404).json({
-//                 message: "User not found"
-//             });
-//         }
+            return res.status(200).json(orders)
+        } else if (user?.role === 'owner') {
+            const ownerOrder = await Order.find({
+                "shopOrder.owner": req.userId
+            })
+                .sort({ createdAt: -1 })
+                .populate([
+                    {
+                        path: "user",
+                        select: "fullname email mobile"
+                    },
+                    {
+                        path: "shopOrder.shop",
+                        select: "name"
+                    },
+                    {
+                        path: "shopOrder.owner",
+                        select: "fullname email mobile"
+                    },
+                    {
+                        path: "shopOrder.shopOrderItems.item",
+                        select: "name image price"
+                    }
+                ]);
 
-//         if (user.role === "user") {
+            const filteredOrder = ownerOrder.map((order) => ({
+                _id: order._id,
+                deliveryAddress: order?.deliveryAddress,
+                paymentMethod: order.paymentMethod,
+                user: order.user,
+                shopOrder: order.shopOrder.find(
+                    (o) => String(o.owner?._id) === String(req.userId)
+                ),
+                createdAt: order.createdAt
+            }));
 
-//             const orders = await Order.find({
-//                 user: req.userId
-//             })
-//                 .sort({ createdAt: -1 })
-//                 .populate([
-//                     { path: "shopOrder.shop", select: "name" },
-//                     { path: "shopOrder.owner", select: "fullname email mobile" },
-//                     {
-//                         path: "shopOrder.shopOrderItems.item",
-//                         select: "name image price"
-//                     }
-//                 ]);
+            console.log('filteredOrder', filteredOrder)
 
-//             return res.status(200).json(orders);
-//         }
-
-//         else if (user.role === "owner") {
-
-//             const ownerOrders = await Order.find({
-//                 "shopOrder.owner": req.userId
-//             })
-//                 .sort({ createdAt: -1 })
-//                 .populate([
-//                     { path: "user", select: "fullname email mobile" },
-//                     { path: "shopOrder.shop", select: "name" },
-//                     {
-//                         path: "shopOrder.shopOrderItems.item",
-//                         select: "name image price"
-//                     }
-//                 ]);
-
-//             return res.status(200).json(ownerOrders);
-//         }
-
-//         return res.status(403).json({
-//             message: "You are not authorized to access orders"
-//         });
-
-//     } catch (error) {
-//         console.error("Get My Order Error:", error);
-
-//         return res.status(500).json({
-//             message: "Failed to fetch orders",
-//             error: error.message
-//         });
-//     }
-// };
+            return res.status(200).json(filteredOrder);
+        }
+    } catch (error) {
+        return res.status(500).json({
+            message: `Order getting error ${error}`,
+            error: error.message
+        });
+    }
+}

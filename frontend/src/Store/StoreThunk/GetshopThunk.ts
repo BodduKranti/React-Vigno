@@ -33,7 +33,7 @@ export const getAllShopFoodItems = createAsyncThunk<any, void, { rejectValue: st
         return await queryClient.fetchQuery({
             queryKey: ['shop-items'],
             queryFn: () => AxiosInstance.get(ROUTES.GET_SHOT_ITEMS),
-            staleTime: 60_000,
+            staleTime: Infinity,
         })
     } catch (error: any) {
         return rejectWithValue(error?.response?.data?.message)
@@ -48,7 +48,7 @@ export const getShopItemsbyId = createAsyncThunk<any, any, { rejectValue: string
                 queryKey: ['getshopitems-byid', id],
                 queryFn: () =>
                     AxiosInstance.get(`${ROUTES.GET_SHOT_ITEMS_BY_ID}/${id}`, { withCredentials: true }),
-                staleTime: 0,   // 👈 always hit the API
+                staleTime: Infinity,   // 👈 always hit the API
             })
             return res
         } catch (error: any) {
@@ -63,10 +63,28 @@ export const cateItemsThunkcontroler = createAsyncThunk<any, void, { rejectValue
         const res = await queryClient.fetchQuery({
             queryKey: ['cate-items'],
             queryFn: () => AxiosInstance.get(`${ROUTES.GET_CATE_ITEMS_BY_CAT}/${cat}`, { withCredentials: true }),
-            staleTime: 0
+            staleTime: Infinity
         })
         return res
     } catch (error: any) {
         return rejectWithValue(error?.response?.data?.message)
     }
 })
+
+
+export const getMyOrder = createAsyncThunk<any, void, { rejectValue: string }>(
+    "owner/user/order",
+    async (_, { rejectWithValue }) => {
+        try {
+            const res: any = await queryClient.fetchQuery({
+                queryKey: ["owner/shop", "user"], // was ['user','order'], which clashes with the user thunk
+                queryFn: () => AxiosInstance.get(ROUTES.GET_USER_OWNER_ORDER, { withCredentials: true }),
+                staleTime: Infinity
+            })
+            console.log('order list muorder back', res.data)
+            return res.data
+        } catch (error: any) {
+            return rejectWithValue(error?.response?.data?.message ?? "Failed to load orders") // `return` was missing
+        }
+    }
+)

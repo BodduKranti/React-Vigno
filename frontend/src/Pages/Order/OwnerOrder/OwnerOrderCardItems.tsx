@@ -1,9 +1,10 @@
 import { useState } from "react"
 import { paymentMethods, type Status } from "../../../type"
 
-// interface OwnerOrderCardItemsprops {
-//     items: any
-// }
+interface shopItem {
+    _id: string,
+    name: string
+}
 
 
 interface OrderItem {
@@ -22,17 +23,18 @@ interface OwnerOrder {
         _id: string
         status: Status
         subTotal?: number
-        shopOrderItems: OrderItem[]
+        shopOrderItems: OrderItem[],
+        shop: shopItem
     }
 }
 interface Props {
     items: OwnerOrder
     // Call your API here, return a promise so the card can show "Saving…"
-    onStatusChange?: (orderId: string, shopOrderId: string, status: Status) => Promise<void> | void
+    onStatusChange: ((orderId: string, shopOrderId: string, status: Status) => Promise<void> | void)
 }
 
-// const DELIVERYBOU_STATUSES: Status[] = ["pending", "preparing", "out for delivery", "delivered", "cancelled"]
-const STATUSES: Status[] = ["pending", "preparing", "out for delivery"]
+// const DELIVERYBOU_STATUSES: Status[] = ["pending", "preparing", "out of delivery", "delivered", "cancelled"]
+const STATUSES: Status[] = ["pending", "preparing", "out of delivery"]
 
 const money = (n = 0) =>
     new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(n)
@@ -51,62 +53,30 @@ const Thumb = ({ src, label }: { src?: string; label: string }) => {
         <span className="oc-fallback" aria-hidden="true">{label.charAt(0).toUpperCase()}</span>
     )
 }
-const OwnerOrderCardItems = ({ items: order }: Props) => {
-    console.log('items', order)
+const OwnerOrderCardItems = ({ items: order, onStatusChange }: Props) => {
     const { user, shopOrder, deliveryAddress: addr } = order
     const [status, setStatus] = useState<Status>(shopOrder?.status)
     const mapsUrl =
         addr?.latitude !== undefined && addr?.longitude !== undefined
             ? `https://www.google.com/maps?q=${addr.latitude},${addr.longitude}`
             : undefined
-    const [saving, setSaving] = useState(false)
+    // const [saving, setSaving] = useState(false)
     const closed =
         status === "delivered" ||
         status === "cancelled"
 
     const change = async (next: Status) => {
 
-        // const currentStatus =
-        //     shopOrder.status ??
-        //     shopOrder.find((s) => s._id === shopOrderId)?.status ??
-        //     "pending"
+        let orderId: string = String(order?._id)
+        let shopId: string = String(shopOrder?.shop?._id)
+        let status = next
 
-        if (next === status) return
+        // if (next === status) return
         setStatus(next)
-        // // Update only the selected shop order
-        // setStatuses((prev) => ({
-        //     ...prev,
-        //     [shopOrderId]: next
-        // }))
-        setSaving(true)
-        // try {
-        //     setSaving(false)
-        // } catch (error) {
+        // setSaving(true)
+        onStatusChange(orderId, shopId, status)
 
-        // }
-        // setSavingIds((prev) => [...prev, shopOrderId])
-
-        // try {
-        //     await onStatusChange?.(order._id, shopOrderId, next)
-        // } catch (error) {
-        //     // Rollback if API fails
-        //     setStatuses((prev) => ({
-        //         ...prev,
-        //         [shopOrderId]: currentStatus
-        //     }))
-
-        //     console.error("Status update failed:", error)
-        // } finally {
-        //     setSavingIds((prev) =>
-        //         prev.filter((id) => id !== shopOrderId)
-        //     )
-        // }
     }
-    // const currentStatus = statuses[s._id] ?? s.status
-
-    // const closed =
-    //     currentStatus === "delivered" ||
-    //     currentStatus === "cancelled"
 
     return (
         <article key={order._id} className={`w-full! oc s-${status.replace(/\s/g, "-")}`}>
@@ -167,7 +137,7 @@ const OwnerOrderCardItems = ({ items: order }: Props) => {
                     <span>Update status</span>
                     <select
                         value={status}
-                        disabled={closed || saving}
+                        disabled={closed}
                         onChange={(e) =>
                             change(e.target.value as Status)
                         }

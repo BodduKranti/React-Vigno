@@ -29,6 +29,12 @@ const FoodItemsListData = ({ isLoading, foodItemsListData }: FoodItemsListprops)
                             modules={[Navigation, A11y]}
                             navigation={false}
                             loop={true}
+                            autoplay={{
+                                delay: 2000,
+                                disableOnInteraction: false,
+                                pauseOnMouseEnter: true,
+                            }}
+                            speed={800}
                             spaceBetween={16}
                             slidesPerView={2}
                             breakpoints={{

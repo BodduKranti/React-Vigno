@@ -32,9 +32,13 @@ export const ROUTES = Object.freeze({
 
     //USER ORDER
     GET_USER_ORDERS: "/shop/order/getMyOrder",
+    GET_USER_OWNER_ORDER: "/shop/order/getuserOwenerOrder",
 
     //OWNER ORDER
-    GET_OWNER_ORDER: "/shop/order/getOwnerOrder"
+    GET_OWNER_ORDER: "/shop/order/getOwnerOrder",
+
+    //order_status
+    ORDERED_STATUS: "/shop/order/order-status"
 });
 
 
@@ -66,7 +70,7 @@ export enum itemFoodType {
     "veg" = "Vegeterian"
 }
 
-export type Status = "pending" | "preparing" | "out for delivery" | "delivered" | "cancelled"
+export type Status = "pending" | "preparing" | "out of delivery" | "delivered" | "cancelled"
 
 export enum paymentMethods {
     "cod" = "Cash On Delivery",

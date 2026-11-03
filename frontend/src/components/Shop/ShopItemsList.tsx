@@ -10,7 +10,7 @@ import AddFoodItemForm from "./AddFoodItemForm"
 
 
 const ShopItemsList = () => {
-    const { myshopData: shopdata }: any = useAppSelecter((state) => state.getMyshopdata)
+    const shopdata: any = useAppSelecter((state) => state.getMyshopdata.myshopData.data)
     const { items } = shopdata
     const [open, setOpen] = useState<any>({ isOpen: false, items: null })
     return (

@@ -27,7 +27,7 @@ const AddShop = () => {
     const { city, state, address } = useCity()
     const [loader, setLoader] = useState<boolean>(false)
     const dispatch = useAppDispatch()
-    const { myshopData: shopdata }: any = useAppSelecter((state) => state.getMyshopdata)
+    const shopdata: any = useAppSelecter((state) => state.getMyshopdata?.myshopData.data)
 
     const {
         register,

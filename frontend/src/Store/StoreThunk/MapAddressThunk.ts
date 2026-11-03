@@ -24,7 +24,7 @@ export const maplocationSearchthunkController = createAsyncThunk<any, any, { rej
         const res: any = await queryClient.fetchQuery({
             queryKey: ['locatoin-search'],
             queryFn: () => AxiosGetolocationsearch.get(`${Search}&apiKey=${import.meta.env.VITE_GEOLOCATION_API_KEY}`, { signal }),
-            staleTime: 0,
+            staleTime: Infinity,
         })
         if (Search.length > 3) {
             return res?.data?.features

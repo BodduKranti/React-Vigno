@@ -26,7 +26,7 @@ export const getuserOrder = createAsyncThunk<any, void, { rejectValue: string }>
         const res: any = await queryClient.fetchQuery({
             queryKey: ['user', 'order'],
             queryFn: () => AxiosInstance.get(ROUTES.GET_USER_ORDERS, { withCredentials: true, signal }),
-            staleTime: 0
+            staleTime: Infinity
         })
         return res.data
     } catch (error: any) {
@@ -36,12 +36,11 @@ export const getuserOrder = createAsyncThunk<any, void, { rejectValue: string }>
 
 export const getOwnerOrder = createAsyncThunk<any, void, { rejectValue: string }>(
     "owner/order",
-    async (_, { rejectWithValue, signal }) => {
+    async (_, { rejectWithValue }) => {
         try {
             const res: any = await queryClient.fetchQuery({
                 queryKey: ["owner", "order"], // was ['user','order'], which clashes with the user thunk
-                queryFn: () => AxiosInstance.get(ROUTES.GET_OWNER_ORDER, { withCredentials: true, signal }),
-                staleTime: 0
+                queryFn: () => AxiosInstance.get(ROUTES.GET_OWNER_ORDER, { withCredentials: true }),
             })
             return res.data
         } catch (error: any) {
@@ -49,3 +48,4 @@ export const getOwnerOrder = createAsyncThunk<any, void, { rejectValue: string }
         }
     }
 )
+
