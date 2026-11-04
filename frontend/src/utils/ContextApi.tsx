@@ -12,6 +12,7 @@ import {
 
 import { useAppDispatch, useAppSelecter } from "../Store/hook";
 import { getUserfun } from "../Store/StoreThunk/GetUserThunk";
+import useUpdateLocation from "../hooks/useUpdateLocation";
 
 interface AuthUser {
     fullname?: string | null;
@@ -48,6 +49,8 @@ const AuthContextprovider = ({ children }: { children: React.ReactNode }) => {
         }),
         [userData]
     );
+
+    useUpdateLocation(true)
 
     // Restore session once on app load / refresh
     useEffect(() => {

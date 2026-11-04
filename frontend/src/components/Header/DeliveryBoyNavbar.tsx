@@ -67,7 +67,7 @@ export default function DeliveryBoyNavbar({ user }: { user: any }) {
         <>
             <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white shadow-sm">
                 {/* Desktop and tablet navbar */}
-                <div className="mx-auto hidden max-w-[1600px] items-center gap-5 px-6 py-4 lg:flex xl:gap-7">
+                <div className="mx-auto hidden max-w-[1600px] justify-between items-center gap-5 px-6 py-4 lg:flex xl:gap-7">
                     {/* Logo */}
                     <Link
                         to={"/"}
@@ -78,99 +78,95 @@ export default function DeliveryBoyNavbar({ user }: { user: any }) {
                     </Link>
 
                     {/* Location dropdown */}
-                    <CurrentLocation key={1} />
+                    {/* <CurrentLocation key={1} /> */}
 
-                    {/* Main navigation links */}
-                    <nav className="flex shrink-0 items-center gap-5 xl:gap-7">
-                        {navigation.map((item) => (
-                            <NavLink
-                                key={item.name}
-                                to={item?.href}
-                                className={({ isActive, isPending }) => `relative whitespace-nowrap py-2 text-sm font-medium transition ${isPending ? 'pending' : ''} ${isActive
-                                    ? "text-orange-600 active"
-                                    : "text-gray-700 hover:text-orange-500"
-                                    }`}
-                            >
-                                {({ isActive }) => (
-                                    <>
-                                        {item.name}
 
-                                        {isActive && (
-                                            <span className="absolute inset-x-0 -bottom-1 h-0.5 rounded-full bg-orange-500" />
-                                        )}
-                                    </>
-                                )}
-                            </NavLink>
-                        ))}
-                    </nav>
 
                     {/* Favorites */}
-                    <button
+                    {/* <button
                         type="button"
                         aria-label="Favorites"
                         className="shrink-0 text-gray-800 transition hover:scale-110 hover:text-orange-500"
                     >
                         <Heart size={25} />
-                    </button>
+                    </button> */}
 
-                    {/* Cart */}
-                    <button
-                        type="button"
-                        aria-label={`Shopping cart with ${cartCount} items`}
-                        className="relative shrink-0 text-gray-800 transition hover:scale-110 hover:text-orange-500"
-                    >
-                        <ShoppingCart size={26} />
-                        {cartCount > 0 && (
-                            <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-orange-500 px-1 text-xs font-bold text-white">
-                                {cartCount}
-                            </span>
-                        )}
-                    </button>
+                    <div className="w-auto flex items-center justify-end gap-4">
+                        {/* Cart */}
+                        <button
+                            type="button"
+                            aria-label={`Shopping cart with ${cartCount} items`}
+                            className="relative shrink-0 text-gray-800 transition hover:scale-110 hover:text-orange-500"
+                        >
+                            {/* <ShoppingCart size={26} /> */}
+                            My Order
+                            {cartCount > 0 && (
+                                <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-orange-500 px-1 text-xs font-bold text-white">
+                                    {cartCount}
+                                </span>
+                            )}
+                        </button>
 
-                    {/* User profile */}
-                    <UserProfile
-                        user={user}
-                        logout={logOut}
-                        isFetching={isFetching}
-                        profileItems={profileItems}
-                        key={2}
-                    />
+                        {/* User profile */}
+                        <UserProfile
+                            user={user}
+                            logout={logOut}
+                            isFetching={isFetching}
+                            profileItems={profileItems}
+                            key={2}
+                        />
+                    </div>
+
+
                 </div>
 
                 {/* Mobile and tablet header */}
                 <div className="px-4 py-3 lg:hidden">
                     <div className="flex items-center justify-between gap-3">
-                        <button
-                            type="button"
-                            onClick={() => setMobileOpen(!mobileOpen)}
-                            aria-label={mobileOpen ? "Close menu" : "Open menu"}
-                            aria-expanded={mobileOpen}
-                            className="rounded-xl p-2 text-gray-800 hover:bg-orange-50"
-                        >
-                            {mobileOpen ? <X size={25} /> : <Menu size={25} />}
-                        </button>
+                        <div className="w-auto flex justify-start gap-3 items-center">
+                            <button
+                                type="button"
+                                onClick={() => setMobileOpen(!mobileOpen)}
+                                aria-label={mobileOpen ? "Close menu" : "Open menu"}
+                                aria-expanded={mobileOpen}
+                                className="rounded-xl p-2 text-gray-800 hover:bg-orange-50"
+                            >
+                                {mobileOpen ? <X size={25} /> : <Menu size={25} />}
+                            </button>
 
-                        <a href="/" className="flex items-center gap-2">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500 text-white">
-                                <Utensils size={23} />
-                            </div>
-                            <h1 className="text-xl font-extrabold tracking-tight text-gray-900">
-                                Quick<span className="text-orange-500">Bite</span>
-                            </h1>
-                        </a>
+                            <a href="/" className="flex items-center gap-2">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500 text-white">
+                                    <Utensils size={23} />
+                                </div>
+                                <h1 className="text-xl font-extrabold tracking-tight text-gray-900">
+                                    Quick<span className="text-orange-500">Bite</span>
+                                </h1>
+                            </a>
+                        </div>
 
-                        <button
-                            type="button"
-                            aria-label={`Cart, ${cartCount} items`}
-                            className="relative rounded-xl p-2 text-gray-800 hover:bg-orange-50"
-                        >
-                            <ShoppingCart size={24} />
-                            {cartCount > 0 && (
-                                <span className="absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-orange-500 px-1 text-[10px] font-bold text-white">
-                                    {cartCount}
-                                </span>
-                            )}
-                        </button>
+                        <div className="w-auto flex justify-end gap-3 items-center">
+                            <button
+                                type="button"
+                                aria-label={`Cart, ${cartCount} items`}
+                                className="relative rounded-xl p-2 text-gray-800 hover:bg-orange-50"
+                            >
+                                my Order
+                                {cartCount > 0 && (
+                                    <span className="absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-orange-500 px-1 text-[10px] font-bold text-white">
+                                        {cartCount}
+                                    </span>
+                                )}
+                            </button>
+                            {/* User profile */}
+                            <UserProfile
+                                user={user}
+                                logout={logOut}
+                                isFetching={isFetching}
+                                profileItems={profileItems}
+                                key={2}
+                            />
+                        </div>
+
                     </div>
 
                     {/* Location dropdown */}

@@ -1,5 +1,11 @@
 import { useState } from "react"
-import { paymentMethods, type Status } from "../../../type"
+import { paymentMethods, ROUTES, type Status } from "../../../type"
+import AvailbleDeliverysection from "../AvailbleDeliveryOrderedboys/AvailbleDeliverysection"
+import NoitemShopfound from "../../../components/NoitemShopfound"
+import { AxiosInstance } from "../../../services"
+import { toast } from "react-toastify"
+import OrderItem from "../OrderItem"
+import AcceptedDeliveryBoyItem from "../AvailbleDeliveryOrderedboys/AcceptedDeliveryBoyItem"
 
 interface shopItem {
     _id: string,
@@ -24,13 +30,14 @@ interface OwnerOrder {
         status: Status
         subTotal?: number
         shopOrderItems: OrderItem[],
-        shop: shopItem
+        shop: shopItem,
+        assignedDeliveryBoy: any
     }
 }
 interface Props {
     items: OwnerOrder
     // Call your API here, return a promise so the card can show "Saving…"
-    onStatusChange: ((orderId: string, shopOrderId: string, status: Status) => Promise<void> | void)
+    onStatusChange?: ((orderId: string, shopOrderId: string, status: Status) => Promise<void> | void),
 }
 
 // const DELIVERYBOU_STATUSES: Status[] = ["pending", "preparing", "out of delivery", "delivered", "cancelled"]
@@ -45,16 +52,10 @@ const timeText = (d?: string) =>
 const initials = (name: string) =>
     name.split(" ").filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("")
 
-const Thumb = ({ src, label }: { src?: string; label: string }) => {
-    const [failed, setFailed] = useState(false)
-    return src && !failed ? (
-        <img src={src} alt={label} loading="lazy" onError={() => setFailed(true)} />
-    ) : (
-        <span className="oc-fallback" aria-hidden="true">{label.charAt(0).toUpperCase()}</span>
-    )
-}
-const OwnerOrderCardItems = ({ items: order, onStatusChange }: Props) => {
+
+const OwnerOrderCardItems = ({ items: order, }: Props) => {
     const { user, shopOrder, deliveryAddress: addr } = order
+    const [availbleBoys, setAvailbleBoys] = useState<any>([])
     const [status, setStatus] = useState<Status>(shopOrder?.status)
     const mapsUrl =
         addr?.latitude !== undefined && addr?.longitude !== undefined
@@ -65,19 +66,40 @@ const OwnerOrderCardItems = ({ items: order, onStatusChange }: Props) => {
         status === "delivered" ||
         status === "cancelled"
 
-    const change = async (next: Status) => {
+    // const change = async (next: Status) => {
 
-        let orderId: string = String(order?._id)
-        let shopId: string = String(shopOrder?.shop?._id)
-        let status = next
 
-        // if (next === status) return
-        setStatus(next)
-        // setSaving(true)
-        onStatusChange(orderId, shopId, status)
 
+    //     // if (next === status) return
+    //     setStatus(next)
+    //     // setSaving(true)
+    //     onStatusChange(orderId, shopId, status)
+
+    // }
+
+    // const orderStatus = async (orderId: string, shopId: string, status: Status) => {
+    const change = async (next: any) => {
+        try {
+
+            let orderId: string = String(order?._id)
+            let shopId: string = String(shopOrder?.shop?._id)
+            let status = next
+            setStatus(next)
+            const res = await AxiosInstance.post(
+                `${ROUTES.ORDERED_STATUS}/${orderId}/${shopId}`,
+                { status },
+                { withCredentials: true }
+            )
+
+            // const key = `${orderId}-${shopId}`
+            const boys = res?.data?.availbelboys ?? []
+
+            setAvailbleBoys(boys)
+        } catch (err: any) {
+            toast.error(err?.response?.data?.message || "Failed to update status")
+        }
     }
-
+    console.log('status', status)
     return (
         <article key={order._id} className={`w-full! oc s-${status.replace(/\s/g, "-")}`}>
             {/*USer details*/}
@@ -120,20 +142,13 @@ const OwnerOrderCardItems = ({ items: order, onStatusChange }: Props) => {
                 {shopOrder.shopOrderItems.map((i, idx) => {
                     const name = i.name ?? i.item?.name ?? "Item"
                     return (
-                        <li key={idx}>
-                            <span className="oc-img">
-                                <Thumb src={i.item?.image} label={name} />
-                                <em>×{i.quantity}</em>
-                            </span>
-                            <b>{name}</b>
-                            <small>{money(i.price)} each</small>
-                        </li>
+                        <OrderItem idx={idx} i={i} name={name} />
                     )
                 })}
             </ul>
 
             <footer className="oc-foot">
-                <label className="oc-update">
+                <label className="oc-update py-2! text-xs!">
                     <span>Update status</span>
                     <select
                         value={status}
@@ -155,9 +170,35 @@ const OwnerOrderCardItems = ({ items: order, onStatusChange }: Props) => {
                 </div>
             </footer>
 
-            {/* <p className="oc-msg" role="status" aria-live="polite">
-                        {saving ? "Saving…" : error}
-                    </p> */}
+
+            {
+                availbleBoys?.length === 0 && status === 'out of delivery' ?
+                    shopOrder?.assignedDeliveryBoy &&
+                    <AcceptedDeliveryBoyItem
+                        boy={{
+                            _id: shopOrder?.assignedDeliveryBoy?._id,
+                            fullname: shopOrder?.assignedDeliveryBoy?.fullname,
+                            email: shopOrder?.assignedDeliveryBoy?.email,
+                            mobile: shopOrder?.assignedDeliveryBoy?.mobile
+                        }}
+                    />
+                    :
+
+                    status === 'out of delivery' &&
+                    <div className="w-full mt-5">
+                        {
+                            availbleBoys?.length === 0 ?
+
+                                <NoitemShopfound
+                                    message1="No delivery partners within 5 km right now."
+                                    message2=""
+                                />
+                                :
+                                <AvailbleDeliverysection boysData={availbleBoys} />
+                        }
+                    </div>
+
+            }
         </article>
 
     )

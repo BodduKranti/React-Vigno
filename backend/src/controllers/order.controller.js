@@ -1,6 +1,9 @@
+import { set } from "mongoose"
+import DeliveryAssign from "../models/deliveryAssign.model.js"
 import { Order } from "../models/order.model.js"
 import Shop from "../models/shop.model.js"
 import User from "../models/user.model.js"
+import { ShopItems } from "../models/shopitems.model.js"
 
 export const placeOrderController = async (req, res) => {
     try {
@@ -115,6 +118,10 @@ export const getOwnerOrder = async (req, res) => {
                 {
                     path: "shopOrder.shopOrderItems.item",
                     select: "name image price"
+                },
+                {
+                    path: "shopOrder.assignedDeliveryBoy",
+                    select: "fullname email mobile"
                 }
             ]);
 
@@ -169,22 +176,105 @@ export const updateOrderstatus = async (req, res) => {
 
         shopOrder.status = status;
 
+        let deliveryBoyPayload = [];
+
+        if (status === 'out of delivery' && !shopOrder?.assignment) {
+            const { latitude, longitude } = order?.deliveryAddress
+            const nearbyDeliveryboys = await User.find({
+                role: 'deliveryboy',
+                location: {
+                    $near: {
+                        $geometry: {
+                            type: "Point",
+                            coordinates: [Number(latitude), Number(longitude)],
+                            $maxDistance: 5000
+                        }
+                    }
+                }
+            })
+
+            const nearbyUserids = nearbyDeliveryboys.map(b => b._id)
+
+            const busyIds = await DeliveryAssign.find({
+                assignedTo: { $in: nearbyUserids },
+                status: { $nin: ['broadcasted', 'completed'] }
+            }).distinct("assignedTo")
+
+            //duplcation avoid below this
+            // const busyIdSet = new Set(busyIds.map((id) => String(id)))
+            const busyIdSet = new Set(busyIds.map(String));
+            // Filter available delivery boys
+            const availbelboys = nearbyDeliveryboys.filter((boy) => !busyIdSet.has(boy._id));
+
+            console.log('availbelboys', availbelboys)
+
+            deliveryBoyPayload = availbelboys.map((boy) => ({
+                id: boy._id,
+                fullName: boy.fullname,
+                longitude: JSON.stringify(boy.location.coordinates[0]),
+                latitude: JSON.stringify(boy.location.coordinates[1]),
+                mobile: boy.mobile
+            }));
+
+            const candidates = availbelboys.map((b) => String(b._id))
+
+            if (candidates?.length == 0) {
+                await order.save()
+                return res.status(400).json({ message: `There is no Delivery boy availble` })
+            }
+            //  console.dir('11090'.availbelboys[0].location, { depth: null });
+            const deliveryAssignment = await DeliveryAssign.create({
+                order: order?._id,
+                shop: shopOrder?.shop,
+                shopOrderId: shopOrder?._id,
+                broadcastedTo: candidates,
+                status: "broadcasted"
+            })
+            shopOrder.assignedDeliveryBoy = deliveryAssignment?.assignedTo
+            shopOrder.assignment = deliveryAssignment?._id
+            deliveryBoyPayload = availbelboys.map((b) => ({
+                id: b._id,
+                fullName: b?.fullname,
+                longitude: JSON.stringify(b?.location?.coordinates?.[1]),
+                latitude: JSON.stringify(b?.location?.coordinates?.[0]),
+                mobile: b.mobile
+            }))
+
+        }
+
+        //
+
         // Save the parent order
+        // await shopOrder.save();
         await order.save();
-
+        const updatedShopOrder = order.shopOrder.find(
+            (o) => String(o.shop) === String(shopId)
+        );
         // Return updated order with populated fields
-        // const updatedOrder = await Order.findById(orderId)
-        //     .populate([
-        //         { path: "user", select: "fullname email mobile" },
-        //         { path: "shopOrder.shop", select: "name image" },
-        //         { path: "shopOrder.owner", select: "fullname email mobile" },
-        //         {
-        //             path: "shopOrder.shopOrderItems.item",
-        //             select: "name image price"
-        //         }
-        //     ]);
+        await order
+            .populate([
+                { path: "shopOrder.shop", select: "name image" },
+                { path: "shopOrder.assignedDeliveryBoy", select: "fullname email mobile" },
 
-        return res.status(200).json(shopOrder.status);
+                // { path: "shopOrder.owner", select: "fullname email mobile" },
+                // { path: "user", select: "fullname email mobile" },
+
+                // { path: "shopOrder.assignedDeliveryBoy", select: "fullname email mobile" },
+                // {
+                //     path: "shopOrder.shopOrderItems.item",
+                //     select: "name image price"
+                // }
+            ]);
+
+
+
+        // return res.status(200).json(shopOrder.status);
+        return res.status(200).json({
+            shopOrder: updatedShopOrder,
+            assignedDeliveryBoy: updatedShopOrder?.assignedDeliveryBoy,
+            availbelboys: deliveryBoyPayload,
+            assignment: updatedShopOrder?.assignment?._id
+        });
 
     } catch (error) {
         return res.status(500).json({
@@ -256,3 +346,225 @@ export const user_owner_orderController = async (req, res) => {
         });
     }
 }
+
+export const getAssignmentOrderController = async (req, res) => {
+    try {
+        const deliveryBoyId = req.userId;
+
+        const assignments = await DeliveryAssign.find({
+            broadcastedTo: deliveryBoyId,
+            status: "broadcasted"
+        })
+            .sort({ createdAt: -1 })
+            .populate({
+                path: "order",
+                model: Order,
+                populate: {
+                    path: "shopOrder.shopOrderItems.item",
+                    select: "name image price"
+                }
+            })
+            .populate({ path: "shop", model: Shop, select: "name" })
+            .lean();
+
+        const seen = new Set();
+        const formattedData = [];
+
+        for (const a of assignments) {
+            const shopOrder = a.order?.shopOrder?.find(
+                (so) => String(so._id) === String(a.shopOrderId)
+            );
+            if (!shopOrder) continue;
+
+            const key = `${a.order._id}-${a.shopOrderId}`;
+            if (seen.has(key)) continue;
+            seen.add(key);
+
+            const items = (shopOrder.shopOrderItems ?? []).map((i) => ({
+                _id: i._id,
+                itemId: i.item?._id ?? i.item,        // populated doc or raw id
+                name: i.name ?? i.item?.name,
+                image: i.item?.image ?? null,         // adjust if your field is not "image"
+                price: i.price,
+                quantity: i.quantity
+            }));
+
+            const computedSubtotal = items.reduce(
+                (sum, i) => sum + (Number(i.price) || 0) * (Number(i.quantity) || 0),
+                0
+            );
+
+            formattedData.push({
+                assignmentId: a._id,
+                orderId: a.order._id,
+                shopOrderId: a.shopOrderId,
+                shopName: a.shop?.name,
+                deliveryAdd: a.order.deliveryAddress,
+                items,
+                subtotal: shopOrder.subtotal ?? shopOrder.subTotal ?? computedSubtotal
+            });
+        }
+
+        return res.status(200).json(formattedData);
+    } catch (error) {
+        return res.status(500).json({
+            message: "Getting assignment order error",
+            error: error.message
+        });
+    }
+};
+
+export const acceptOrder = async (req, res) => {
+    try {
+        const { assignmentId } = req.params;
+        const riderId = req.userId;
+
+        // rider must not already have an active delivery
+        const alreadyAssigned = await DeliveryAssign.findOne({
+            assignedTo: riderId,
+            status: "assigned"
+        });
+        if (alreadyAssigned) {
+            return res.status(400).json({ message: "You are already assigned to another order" });
+        }
+
+        // atomic: succeeds only if still open AND this rider was notified
+        const assignment = await DeliveryAssign.findOneAndUpdate(
+            { _id: assignmentId, status: "broadcasted", broadcastedTo: riderId },
+            { $set: { assignedTo: riderId, status: "assigned", acceptedAt: new Date() } },
+            { new: true }
+        );
+
+        if (!assignment) {
+            return res.status(400).json({
+                message: "Assignment not found, expired, or already taken"
+            });
+        }
+
+        // set the rider on the matching shop order
+        const result = await Order.updateOne(
+            { _id: assignment.order, "shopOrder._id": assignment.shopOrderId },
+            { $set: { "shopOrder.$.assignedDeliveryBoy": riderId } }
+        );
+
+        if (result.matchedCount === 0) {
+            // roll back so the assignment isn't stuck as "assigned"
+            await DeliveryAssign.updateOne(
+                { _id: assignment._id },
+                { $set: { status: "broadcasted", assignedTo: null }, $unset: { acceptedAt: 1 } }
+            );
+            return res.status(404).json({ message: "Order not found" });
+        }
+
+        return res.status(200).json({
+            message: "Order accepted",
+            assignmentId: assignment._id,
+            orderId: assignment.order
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: "Accept order error",
+            error: error.message
+        });
+    }
+};
+
+export const getCurrentOrder = async (req, res) => {
+    try {
+        const assignment = await DeliveryAssign.findOne({
+            assignedTo: req.userId,
+            status: "assigned",
+        })
+            .populate([
+                { path: "shop", model: Shop, select: "name image" },
+                { path: "assignedTo", select: "fullname email mobile location" },
+                {
+                    path: "order",
+                    model: Order,
+                    populate: [
+                        { path: "user", select: "fullname email mobile location" },
+                        // shop name for every shopOrder
+                        { path: "shopOrder.shop", model: Shop, select: "name" },
+                        // image for every item inside every shopOrder
+                        {
+                            path: "shopOrder.shopOrderItems.item",
+                            model: ShopItems,
+                            select: "name image price",
+                        },
+                    ],
+                },
+            ])
+            .lean();
+
+        if (!assignment) {
+            return res.status(404).json({ message: "No active delivery" });
+        }
+        if (!assignment.order) {
+            return res.status(404).json({ message: "Order not found" });
+        }
+
+        // the shop order that belongs to THIS assignment
+        const shopOrder = assignment.order.shopOrder?.find(
+            (so) => String(so._id) === String(assignment.shopOrderId)
+        );
+        if (!shopOrder) {
+            return res.status(404).json({ message: "Shop order not found" });
+        }
+
+        const shopName = shopOrder.shop?.name ?? assignment.shop?.name ?? null;
+
+        // items with image added
+        const shopOrderItems = (shopOrder.shopOrderItems ?? []).map((i) => ({
+            _id: i._id,
+            item: i.item?._id ?? i.item,          // plain id, same as before
+            name: i.name ?? i.item?.name,
+            image: i.item?.image ?? null,         // change if your field is imageUrl / images[0]
+            price: i.price,
+            quantity: i.quantity,
+            createdAt: i.createdAt,
+            updatedAt: i.updatedAt,
+        }));
+
+        // locations (GeoJSON = [lng, lat])
+        const deliveryBoylocation = { lat: null, lon: null };
+        const coords = assignment.assignedTo?.location?.coordinates;
+        if (Array.isArray(coords) && coords.length === 2) {
+            deliveryBoylocation.lon = Number(coords[0]);
+            deliveryBoylocation.lat = Number(coords[1]);
+        }
+
+        const customerLocation = { lat: null, lon: null };
+        const addr = assignment.order.deliveryAddress;
+        if (addr) {
+            customerLocation.lat = Number(addr.latitude);
+            customerLocation.lon = Number(addr.longitude);
+        }
+
+        return res.status(200).json({
+            _id: assignment.order._id,
+            assignmentId: assignment._id,
+            user: assignment.order.user,
+            shopOrder: {
+                _id: shopOrder._id,
+                shop: shopOrder.shop?._id ?? shopOrder.shop,   // plain id, same as before
+                shopName,                                      // <-- shop name inside shopOrder
+                owner: shopOrder.owner,
+                subTotal: shopOrder.subTotal,
+                status: shopOrder.status,
+                assignment: shopOrder.assignment,
+                assignedDeliveryBoy: shopOrder.assignedDeliveryBoy,
+                shopOrderItems,                                // <-- each item has image
+                createdAt: shopOrder.createdAt,
+                updatedAt: shopOrder.updatedAt,
+            },
+            deliveryAddress: addr,
+            deliveryBoylocation,
+            customerLocation,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: "Current order error",
+            error: error.message,
+        });
+    }
+};

@@ -16,3 +16,12 @@ export const placeOrderShop = () => usePostApi()
 
 //shop order Status
 export const ShopOrderStatus = () => usePostApi()
+
+//get all assignments for delivery boy
+export const getAssignments = () => useGetApi(ROUTES.GET_ASSIGNMENTS_ORDER)
+
+//delivery boy accept the assignment
+export const acceptAssignment = () => usePostApi()
+
+//get current orders
+export const getCurrentOrder = () => useGetApi(ROUTES.GET_CURRENT_ORDER)

@@ -1,5 +1,5 @@
 import express from 'express'
-import { getMyOrder, getOwnerOrder, placeOrderController, updateOrderstatus, user_owner_orderController } from '../controllers/order.controller.js'
+import { acceptOrder, getAssignmentOrderController, getCurrentOrder, getMyOrder, getOwnerOrder, placeOrderController, updateOrderstatus, user_owner_orderController } from '../controllers/order.controller.js'
 import { isAuthMiddleWare } from '../middleware/isAuth.js'
 const orderroute = express.Router()
 
@@ -8,4 +8,7 @@ orderroute.get('/getMyOrder', isAuthMiddleWare, getMyOrder)
 orderroute.get('/getOwnerOrder', isAuthMiddleWare, getOwnerOrder)
 orderroute.post('/order-status/:orderId/:shopId', isAuthMiddleWare, updateOrderstatus)
 orderroute.get('/getuserOwenerOrder', isAuthMiddleWare, user_owner_orderController)
+orderroute.get('/get-assignment', isAuthMiddleWare, getAssignmentOrderController)
+orderroute.post(`/acceptOrder/:assignmentId`, isAuthMiddleWare, acceptOrder)
+orderroute.get(`/get-current-oreder`, isAuthMiddleWare, getCurrentOrder)
 export default orderroute

@@ -41,6 +41,7 @@ export const getOwnerOrder = createAsyncThunk<any, void, { rejectValue: string }
             const res: any = await queryClient.fetchQuery({
                 queryKey: ["owner", "order"], // was ['user','order'], which clashes with the user thunk
                 queryFn: () => AxiosInstance.get(ROUTES.GET_OWNER_ORDER, { withCredentials: true }),
+                staleTime: 0
             })
             return res.data
         } catch (error: any) {

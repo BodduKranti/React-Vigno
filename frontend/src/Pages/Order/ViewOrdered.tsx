@@ -4,6 +4,8 @@ import { getOwnerOrder, getuserOrder } from "../../Store/StoreThunk/GetUserThunk
 import UserOrderCard from "./UserOrder/UserOrderCard"
 import OwnerOrderCard from "./OwnerOrder/OwnerOrderCard"
 import NoitemShopfound from "../../components/NoitemShopfound"
+import PageTitleWithMetaDetails from "../../Layout/PageTileWithMeta"
+import { ROLE_HOME } from "../../type"
 
 
 const ViewOrdered = () => {
@@ -25,14 +27,14 @@ const ViewOrdered = () => {
 
             {
                 Array.isArray(order) && order?.length > 0 ? <>
-                    {role === 'user' && <UserOrderCard order={order} />}
-                    {role === 'owner' && <OwnerOrderCard order={order} />}
+                    {role === 'user' && <UserOrderCard />}
+                    {role === 'owner' && <OwnerOrderCard />}
                 </> :
                     <NoitemShopfound
                         message1="No orders here yet"
                         message2="Orders you place will show up in this list."
-                        btnTxt={'Continue food order'}
-                        URL="/"
+                        btnTxt={'Go Back'}
+                        URL={ROLE_HOME[role]}
                     />
             }
 
@@ -40,4 +42,4 @@ const ViewOrdered = () => {
     )
 }
 
-export default ViewOrdered
+export default PageTitleWithMetaDetails(ViewOrdered, 'My Order', '')

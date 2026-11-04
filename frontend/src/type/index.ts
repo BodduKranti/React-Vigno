@@ -4,6 +4,7 @@ export const ROUTES = Object.freeze({
     DASHBOARD: "/dashboard",
     USERS: "/users",
     LOGOUT: "/auth/logout",
+    UPDATE_USER_LOCATION: "/user/userupdatelocation",
 
     SENDOTP: "/auth/sendotp",
     VERIFY_OTP: "/auth/verifyotp",
@@ -38,7 +39,16 @@ export const ROUTES = Object.freeze({
     GET_OWNER_ORDER: "/shop/order/getOwnerOrder",
 
     //order_status
-    ORDERED_STATUS: "/shop/order/order-status"
+    ORDERED_STATUS: "/shop/order/order-status",
+
+    //Get Assignment Delivery boy order
+    GET_ASSIGNMENTS_ORDER: "/shop/order/get-assignment",
+
+    //Accept oreder
+    DELIVERY_BOY_ACCEPT_ORDER: "/shop/order/acceptOrder",
+
+    //get current order
+    GET_CURRENT_ORDER: `/shop/order/get-current-oreder`
 });
 
 

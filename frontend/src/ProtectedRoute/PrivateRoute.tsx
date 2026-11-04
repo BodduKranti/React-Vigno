@@ -44,7 +44,7 @@ const PrivateRoute = ({ allowRoles }: PrivateRouteProps) => {
             <InnerNavbar user={user} />
         );
 
-    const showFooter = role !== "owner";
+    const showFooter = role !== "owner" && role !== 'deliveryboy';
 
     return (
         <div className="innerBg min-h-screen w-full">

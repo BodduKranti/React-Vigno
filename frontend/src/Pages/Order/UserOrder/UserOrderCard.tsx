@@ -1,11 +1,12 @@
 import { useMemo } from "react"
 import UserOrderCardItem from "./UserOrderCardItem"
 import '../ViewOrderlist.css'
-interface userOrderList {
-    order?: any
-}
+import { useAppSelecter } from "../../../Store/hook"
 
-const UserOrderCard = ({ order }: userOrderList) => {
+
+const UserOrderCard = () => {
+
+    const { order } = useAppSelecter((state) => state.userInfo)
 
     const list = useMemo(() => {
         const all = order ?? []
@@ -17,6 +18,8 @@ const UserOrderCard = ({ order }: userOrderList) => {
         //     )
         // )
     }, [order])
+
+
     return (
         <div className="w-full">
             <p>{list?.length ?? 0} orders placed</p>

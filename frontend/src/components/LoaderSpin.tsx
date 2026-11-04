@@ -1,7 +1,7 @@
 
 const LoaderSpin = () => {
     return (
-        <div className="h-6 w-6 animate-spin rounded-full border-4 borderwhite border-t-transparent" />
+        <div className="h-4 w-4 animate-spin rounded-full border-2 borderwhite border-t-transparent" />
     )
 }
 

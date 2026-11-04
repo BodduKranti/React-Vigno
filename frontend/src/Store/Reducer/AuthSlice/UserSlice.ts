@@ -16,11 +16,13 @@ interface userAuth {
     fullname: string,
     email: string,
     loading: boolean,
+    location: any,
     error: any,
     role: string,
     isAuthenitcate: boolean,
     cartItems: cartitemsprops[],
-    order: any[]
+    order: any[],
+    userData: any
 }
 
 // interface userToken extends userAuth {
@@ -33,9 +35,11 @@ const inititalValue: userAuth = {
     loading: true,
     error: '',
     role: '',
+    location: null,
     isAuthenitcate: false,
     cartItems: [],
-    order: []
+    order: [],
+    userData: null
 }
 
 const userAuthSlice = createSlice({
@@ -84,10 +88,13 @@ const userAuthSlice = createSlice({
                 state.error = ''
             })
             .addCase(getUserfun.fulfilled, (state, action: Partial<any>) => {
+                // console.log(`user data`, action.payload)
+                state.userData = action.payload
                 state.loading = false,
                     state.fullname = action?.payload?.fullname || '',
                     state.email = action?.payload?.email || '',
                     state.role = action?.payload?.role || '',
+                    state.location = action?.payload?.location || null,
                     state.isAuthenitcate = true
             })
             .addCase(getUserfun.rejected, (state, action: Partial<any>) => {
@@ -99,7 +106,6 @@ const userAuthSlice = createSlice({
             //user odered
             .addCase(getuserOrder.fulfilled, (state, action) => {
                 state.order = action.payload
-                state.loading = false
             })
 
             //Owner Order

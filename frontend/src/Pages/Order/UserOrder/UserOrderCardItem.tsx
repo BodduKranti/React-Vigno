@@ -79,14 +79,10 @@ const Tracker = ({ status }: { status: Status }) => {
 const itemImage = (i: OrderItem) => i.item?.image ?? i.item?.image
 const itemName = (i: OrderItem) => i.name ?? i.item?.name ?? "Item"
 const UserOrderCardItem = ({ items: o }: UserOrderCardItem) => {
-    console.log('o order list item', o)
     // const [open, setOpen] = useState<string | null>(null)
     // const isOpen = open === o._id
     const allItems = o.shopOrder.flatMap((s) => s.shopOrderItems ?? [])
     const itemCount = allItems.reduce((n, i) => n + i.quantity, 0)
-
-
-    console.log('o.shopOrder0', o.shopOrder)
 
     return (
         <li key={o._id} className="ov-card flex flex-col">

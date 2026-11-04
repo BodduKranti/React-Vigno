@@ -57,7 +57,7 @@ export const signUpController = async (req, res) => {
             email: email.trim().toLowerCase(),
             password: hashPassword,
             mobile,
-            role: role === "user" ? "user" : "user",
+            role: role === "user" ? "user" : role === "deliveryboy" ? "deliveryboy" : "owner",
         });
 
         console.log('user', user)

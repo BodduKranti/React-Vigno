@@ -5,7 +5,6 @@ import {
 } from "@tanstack/react-query";
 import { AxiosFormData, AxiosInstance } from "../services";
 
-
 // Request configuration
 interface ApiVariables {
     URL: string;
@@ -58,7 +57,7 @@ export const useGetApi = <T,>(
         queryKey: [URL, params],
         queryFn: () => apiRequest<T>("GET", URL, undefined, params,),
         enabled,
-        staleTime: Infinity,
+        staleTime: Infinity
     });
 };
 
