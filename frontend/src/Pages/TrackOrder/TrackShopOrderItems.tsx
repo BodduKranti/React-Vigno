@@ -2,6 +2,7 @@ import type { shopOrderDetails } from "./TrackShopOrderList"
 import { itemImage, itemName, money, Thumb, Tracker } from "../Order/UserOrder/UserOrderCardItem";
 import TrackDeliveryBoyDetails from "./TrackDeliveryBoyDetails";
 import DeliveryBoyTracking from "../DeliveryBoy/DeliveryBoyTracking";
+import DeliveredSuccess from "./DeliveredSuccess/DeliveredSuccess";
 
 interface shopOderGetItem {
     shop: shopOrderDetails,
@@ -70,6 +71,15 @@ const TrackShopOrderItems = ({ shop: s, data }: shopOderGetItem) => {
                         }}
                     />
                 }
+
+                {s.status === "delivered" && (
+                    <DeliveredSuccess
+                        restaurant={s.shop?.name}
+                        orderId={data._id}
+                        deliveredAt={data?.updatedAt}
+                        onRate={(stars) => console.log("Rating:", stars)}
+                    />
+                )}
 
             </div>
 

@@ -26,7 +26,7 @@ const Trackpage = () => {
             <h2>Track Order</h2>
             {
                 isLoading ?
-                    <div className="w-full h-50 border border-orange-500 rounded-2xl flex justify-between items-center">
+                    <div className="w-full h-50 border border-orange-500 rounded-2xl flex justify-center items-center">
                         <LoaderSpin />
                     </div> :
                     <div className="w-full">

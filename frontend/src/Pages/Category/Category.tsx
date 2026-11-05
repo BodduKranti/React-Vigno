@@ -11,11 +11,15 @@ const Category = () => {
     const { city } = useCity()
     const { data, isLoading } = useGetApi(`${ROUTES.GET_ALL_SHOP_ITEM_BY_CITY}/${city}`, undefined, !!city)
     const foodItemsListData = Array.isArray(data) && data || []
-    console.log(`cate ${cat} items`, foodItemsListData.filter((cat) => cat?.category === cat))
+    const CategoryItems = foodItemsListData.filter((i) => i.category.toLowerCase().includes(cat.trim().toLowerCase()))
+    console.log(`data items`, foodItemsListData)
+    console.log(`cate ${cat} items`, foodItemsListData.filter((i) => i.category.toLowerCase().includes(cat.trim().toLowerCase())))
+
+
     return (
         <section className="foods max-w-[1600px] mx-auto" aria-label="Popular near you">
             <h2 className='capitalize'>Category {cat}</h2>
-            <FoodItemsListData isLoading={isLoading} foodItemsListData={foodItemsListData} />
+            <FoodItemsListData isLoading={isLoading} foodItemsListData={CategoryItems} />
         </section>
     )
 

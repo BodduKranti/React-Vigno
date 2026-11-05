@@ -13,16 +13,11 @@ const FoodItemsListsection = () => {
     const { city } = useCity()
     const { data, isLoading } = useGetApi(`${ROUTES.GET_ALL_SHOP_ITEM_BY_CITY}/${city}`, undefined, !!city)
     const foodItemsListData = Array.isArray(data) && data || []
+    const { data: search, isLoading: searchloading } = useGetApi(`${ROUTES.SEARCH_ITEMS}?query=${searchFood}&city=${city}`, undefined, !!searchFood)
+    const searchItemList = Array.isArray(search) && search || []
 
-    const searchFoodListItems =
-        searchFood.trim().length > 1
-            ? foodItemsListData.filter((item) =>
-                item.name.toLowerCase().includes(searchFood.trim().toLowerCase())
-            )
-            : foodItemsListData;
+    const searchFoodListItems = searchFood.trim().length > 1 ? searchItemList : foodItemsListData;
 
-
-    console.log('searchFood', searchFood)
     return (
         <section className="foods max-w-[1600px] mx-auto" aria-label="Popular near you">
             <h2>Popular near you</h2>
@@ -34,7 +29,7 @@ const FoodItemsListsection = () => {
                         message1={`No Items found`}
                         message2=''
                     /> :
-                    <FoodItemsListData isLoading={isLoading} foodItemsListData={searchFoodListItems} />
+                    <FoodItemsListData isLoading={isLoading || searchloading} foodItemsListData={searchFoodListItems} />
             }
 
 

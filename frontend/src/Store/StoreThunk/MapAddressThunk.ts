@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { AxiosGetolocation, AxiosGetolocationsearch } from "../../services";
+import { AxiosGetolocation } from "../../services";
 import { queryClient } from "../../Providers/QueryClientProviders";
+import axios from "axios";
 
 export interface locationAdd {
     lat: any,
@@ -18,20 +19,24 @@ export const MapAddressThunkController = createAsyncThunk<any, locationAdd, { re
 })
 
 // map location search
-export const maplocationSearchthunkController = createAsyncThunk<any, any, { rejectValue: any }>('map/search', async (Search, { rejectWithValue, signal }) => {
+export const maplocationSearchthunkController = createAsyncThunk<any, any, { rejectValue: any }>('map/item/search', async (Search, { rejectWithValue, signal }) => {
     console.log('searc', Search)
     try {
-        const res: any = await queryClient.fetchQuery({
-            queryKey: ['locatoin-search'],
-            queryFn: () => AxiosGetolocationsearch.get(`${Search}&apiKey=${import.meta.env.VITE_GEOLOCATION_API_KEY}`, { signal }),
-            staleTime: Infinity,
-        })
+
         if (Search.length > 3) {
+            let res: any = await queryClient.fetchQuery({
+                queryKey: ['location', 'search'],
+                queryFn: () => axios.get(`https://api.geoapify.com/v1/geocode/search?text=${Search}&apiKey=${import.meta.env.VITE_GEOLOCATION_API_KEY}`, { signal }),
+                // staleTime: Infinity,
+
+            })
+
             return res?.data?.features
+
         } else {
             return null
         }
-        console.log('location search', res?.data?.features)
+
 
     } catch (error) {
         return rejectWithValue(error)

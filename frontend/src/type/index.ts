@@ -57,6 +57,8 @@ export const ROUTES = Object.freeze({
     SEND_DELIVERY_OTP: `/shop/order/send-deliveryOTP`,
     // VERIFY DELIVERY OTP VIA DELIVERY BOY
     VERYFIE_DELIVERY_OTP: `/shop/order/verify-deliveryOTP`,
+
+    SEARCH_ITEMS: '/shop/shopitems/searchItems'
 });
 
 

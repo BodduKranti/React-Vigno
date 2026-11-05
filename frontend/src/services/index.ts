@@ -16,13 +16,7 @@ export const AxiosGetolocation = axios.create({
     }
 })
 
-// from the below we can get url for the geolocation search
-export const AxiosGetolocationsearch = axios.create({
-    baseURL: import.meta.env.VITE_GEOLOCATION_SEARCH_API_URL,
-    headers: {
-        "Content-Type": "application/json"
-    }
-})
+
 
 // from the below we can get url for the geolocation
 export const AxiosFormData = axios.create({
@@ -44,4 +38,13 @@ AxiosFormData.interceptors.request.use((config) => {
     const token = localStorage.getItem("token");
     if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
+})
+
+
+// from the below we can get url for the geolocation search
+export const AxiosGetolocationsearch = axios.create({
+    baseURL: import.meta.env.VITE_GEOLOCATION_SEARCH_API_URL,
+    headers: {
+        "Content-Type": "application/json"
+    }
 })
