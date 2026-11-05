@@ -31,6 +31,9 @@ interface authContextpropos {
 
 const AuthContext = createContext<authContextpropos | null>(null);
 
+// Change this to the exact role string your backend uses for riders
+const RIDER_ROLE = "deliveryboy";
+
 const AuthContextprovider = ({ children }: { children: React.ReactNode }) => {
     const dispatch = useAppDispatch();
     const userData = useAppSelecter((state) => state.userInfo);
@@ -50,7 +53,9 @@ const AuthContextprovider = ({ children }: { children: React.ReactNode }) => {
         [userData]
     );
 
-    useUpdateLocation(true)
+    // Track location ONLY for a logged-in rider, and only after auth is known
+    const isRider = !user.loading && user.isAuthenitcate && user.role === RIDER_ROLE;
+    useUpdateLocation(isRider);
 
     // Restore session once on app load / refresh
     useEffect(() => {
@@ -74,11 +79,13 @@ const AuthContextprovider = ({ children }: { children: React.ReactNode }) => {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [open]);
 
-    return (
-        <AuthContext.Provider value={{ user, open, setOpen, dropdownRef }}>
-            {children}
-        </AuthContext.Provider>
+    // Memoized so consumers don't re-render on every provider render
+    const value = useMemo(
+        () => ({ user, open, setOpen, dropdownRef }),
+        [user, open]
     );
+
+    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 const useAuthContext = () => {

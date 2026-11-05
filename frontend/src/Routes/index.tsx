@@ -17,6 +17,7 @@ import Category from "../Pages/Category/Category";
 import Checkout from "../Pages/Checkout/Checkout";
 import Ordered from "../Pages/Order/Ordered";
 import ViewOrdered from "../Pages/Order/ViewOrdered";
+import Trackpage from "../Pages/TrackOrder/Trackpage";
 
 
 export const pageRoutes = createBrowserRouter([
@@ -39,6 +40,7 @@ export const pageRoutes = createBrowserRouter([
             { path: "/category/:cat", element: <Category /> },
             { path: "/checkout", element: <Checkout /> },
             { path: "/order", element: <Ordered /> },
+            { path: "/track", element: <Trackpage /> }
         ],
     },
     {

@@ -40,8 +40,8 @@ export const FoodTypeIcon = ({ type, size = 14 }: { type: FoodType; size?: numbe
     const color = type === "veg" ? "#16a34a" : "#dc2626";
     return (
         <span
-            title={type === "veg" ? "Vegetarian" : "Non-vegetarian"}
-            aria-label={type === "veg" ? "Vegetarian" : "Non-vegetarian"}
+            title={type === "veg" ? "Veg" : "Non-veg"}
+            aria-label={type === "veg" ? "Veg" : "Non-veg"}
             role="img"
             className="flex items-center justify-center rounded-full bg-white shadow-sm"
             style={{ width: size + 8, height: size + 8 }}
@@ -147,23 +147,23 @@ const FoodItems = ({ f, quantity, onAdd, onRemove }: FoodItemsProps) => {
             {/* Body */}
             <div className="p-4">
 
-                <div className="w-full flex justify-between items-start">
-                    <div className="w-auto">
+                <div className="w-full flex flex-col justify-between items-start">
+                    <div className="w-full flex items-start justify-between">
                         <h3 className="truncate text-xs font-semibold text-gray-900" title={f.name}>
                             {f.name}
                         </h3>
-                        <p className="mt-0.5 truncate text-sm text-gray-500">
+                        <p className=" truncate text-sm text-gray-500">
                             {/* {f.category}  */}
                             <span className={`${f.foodtype === 'veg' ? 'text-green-500' : 'text-red-500'} text-xs`}>
                                 {f.foodtype === 'veg' ? itemFoodType['veg'] : itemFoodType['no-veg']}
                             </span>
                         </p>
                     </div>
-                    <div className="w-auto flex flex-col ">
+                    <div className="w-auto flex items-center gap-1">
                         <div className="flex gap-0.5">
                             {rating(f?.rating?.average || 0)}
                         </div>
-                        <div className="flex gap-0.5 text-sm text-orange-400 mt-1 font-semibold">
+                        <div className="flex gap-0.5 text-sm text-orange-400  font-semibold">
                             {f?.rating?.count || 0}
                         </div>
                     </div>

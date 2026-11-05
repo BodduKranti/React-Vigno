@@ -1,9 +1,10 @@
-import { set } from "mongoose"
+import crypto from "crypto";
 import DeliveryAssign from "../models/deliveryAssign.model.js"
 import { Order } from "../models/order.model.js"
 import Shop from "../models/shop.model.js"
 import User from "../models/user.model.js"
 import { ShopItems } from "../models/shopitems.model.js"
+import { sendDeliveryOTPemail } from "../utils/Mail.js"
 
 export const placeOrderController = async (req, res) => {
     try {
@@ -565,6 +566,155 @@ export const getCurrentOrder = async (req, res) => {
         return res.status(500).json({
             message: "Current order error",
             error: error.message,
+        });
+    }
+};
+
+export const getOrderByID = async (req, res) => {
+    try {
+        const { orderId } = req.params
+        const order = await Order.findById(orderId)
+            .populate([
+                {
+                    path: "user"
+                },
+                {
+                    path: "shopOrder.shop",
+                    model: Shop
+                },
+                {
+                    path: "shopOrder.assignedDeliveryBoy",
+                    model: User
+                },
+                {
+                    path: "shopOrder.shopOrderItems.item",
+                    model: ShopItems
+                }
+            ]).lean()
+
+        if (!order) {
+            return res.status(400).json({
+                message: `Order not found`
+            })
+        }
+
+        return res.status(200).json(order)
+
+    } catch (error) {
+        return res.status(500).json({
+            message: `Order getting error ${error}`
+        })
+    }
+}
+
+//mobile verify otp
+
+
+export const sendDeliveryyOTP = async (req, res) => {
+    try {
+        const { orderId, shopOrderId } = req.body;
+
+        const order = await Order.findById(orderId).populate("user", "fullname email");
+        if (!order) {
+            return res.status(404).json({ message: "Order not found" });
+        }
+
+        const shopOrder = order.shopOrder.id(shopOrderId);
+        if (!shopOrder) {
+            return res.status(404).json({ message: "Shop order not found" });
+        }
+
+        // only the assigned delivery partner can trigger the OTP
+        if (String(shopOrder.assignedDeliveryBoy) !== String(req.userId)) {
+            return res.status(403).json({ message: "Not your delivery" });
+        }
+
+        if (shopOrder.status !== "out of delivery") {
+            return res.status(400).json({ message: "Order is not out for delivery" });
+        }
+
+        // 4-digit OTP from a secure generator (1000-9999)
+        const OTP = String(crypto.randomInt(1000, 10000));
+
+        // store a hash, not the plain code
+        shopOrder.deliveryOtp = crypto.createHash("sha256").update(OTP).digest("hex");
+        shopOrder.otpExpires = new Date(Date.now() + 10 * 60 * 1000);   // now + 10 minutes
+        shopOrder.otpAttempts = 0;
+
+        await order.save();
+        await sendDeliveryOTPemail(order.user, OTP, order._id);
+
+        return res.status(200).json({
+            message: `OTP sent successfully to ${order.user?.fullname}`
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: "OTP sending error",
+            error: error.message
+        });
+    }
+};
+
+// Verify OTP
+
+export const verifyDeliveryOTP = async (req, res) => {
+    try {
+        const { orderId, shopOrderId, OTP } = req.body;
+
+        const order = await Order.findById(orderId);
+        if (!order) {
+            return res.status(404).json({ message: "Order not found" });
+        }
+
+        const shopOrder = order.shopOrder.id(shopOrderId);
+        if (!shopOrder) {
+            return res.status(404).json({ message: "Shop order not found" });
+        }
+
+        // only the assigned delivery partner can complete it
+        if (String(shopOrder.assignedDeliveryBoy) !== String(req.userId)) {
+            return res.status(403).json({ message: "Not your delivery" });
+        }
+
+        if (shopOrder.status === "delivered") {
+            return res.status(400).json({ message: "Order already delivered" });
+        }
+
+        if (!shopOrder.deliveryOtp || !shopOrder.otpExpires || shopOrder.otpExpires < new Date()) {
+            return res.status(400).json({ message: "OTP expired. Request a new one." });
+        }
+
+        if ((shopOrder.otpAttempts ?? 0) >= 5) {
+            return res.status(429).json({ message: "Too many attempts. Request a new OTP." });
+        }
+
+        const hashed = crypto.createHash("sha256").update(String(OTP).trim()).digest("hex");
+        if (hashed !== shopOrder.deliveryOtp) {
+            shopOrder.otpAttempts = (shopOrder.otpAttempts ?? 0) + 1;
+            await order.save();
+            return res.status(400).json({ message: "Invalid OTP" });
+        }
+
+        // success
+        shopOrder.status = "delivered";
+        shopOrder.deliverAt = new Date();
+        shopOrder.deliveryOtp = null;
+        shopOrder.otpExpires = null;
+        shopOrder.otpAttempts = 0;
+        shopOrder.assignment = null;        // add this line
+        await order.save();
+
+        await DeliveryAssign.deleteOne({
+            order: orderId,
+            shopOrderId,
+            assignedTo: shopOrder?.assignedDeliveryBoy
+        });
+
+        return res.status(200).json({ message: "Order delivered successfully" });
+    } catch (error) {
+        return res.status(500).json({
+            message: "Verify delivery OTP error",
+            error: error.message
         });
     }
 };

@@ -25,3 +25,7 @@ export const acceptAssignment = () => usePostApi()
 
 //get current orders
 export const getCurrentOrder = () => useGetApi(ROUTES.GET_CURRENT_ORDER)
+
+//POST Requrest for SEND OTP TO USE VIA EMAIOL
+export const sendDeliveryOTP = () => usePostApi()
+export const verifyDeliveryOTP = () => usePostApi()

@@ -2,7 +2,6 @@
 import { useState } from "react";
 import {
     Heart,
-    ShoppingCart,
     UserRound,
     Menu,
     X,

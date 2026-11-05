@@ -1,9 +1,12 @@
 import { MapPin, Search } from 'lucide-react';
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useAuthContext } from '../../utils/ContextApi';
 import useCity from '../../hooks/useCity';
+import { useAppDispatch } from '../../Store/hook';
+import { searchFoodTitle } from '../../Store/Reducer/SearchFoodslice/SearchFoodslice';
 
 const CurrentLocation = () => {
+    const dispatch = useAppDispatch()
     const { city } = useCity()
     // const [location, setLocation] = useState<string>('Hyderabad')
     const { dropdownRef } = useAuthContext()
@@ -17,6 +20,10 @@ const CurrentLocation = () => {
 
         window.location.href = `/restaurants?search=${encodeURIComponent(query)}`;
     };
+
+    useEffect(() => {
+        dispatch(searchFoodTitle(search))
+    }, [search])
 
     return (
         <>

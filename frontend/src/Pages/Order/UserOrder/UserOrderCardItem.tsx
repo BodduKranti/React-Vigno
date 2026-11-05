@@ -1,5 +1,7 @@
 import { useState } from "react"
 import type { Status } from "../../../type"
+import Button from "../../../components/field/Button"
+import { useNavigate } from "react-router"
 
 interface item {
     image: string,
@@ -34,14 +36,14 @@ interface UserOrderCardItem {
     items: Order
 }
 
-const money = (n = 0) =>
+export const money = (n = 0) =>
     new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(n)
 
-const dateText = (d: string) =>
+export const dateText = (d: string) =>
     new Date(d).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })
 
 // Image with graceful fallback to a letter tile
-const Thumb = ({ src, label, size = 42 }: { src?: string; label: string; size?: number }) => {
+export const Thumb = ({ src, label, size = 42 }: { src?: string; label: string; size?: number }) => {
     const [failed, setFailed] = useState(false)
     return (
         <span className="ov-thumb" style={{ width: size, height: size }}>
@@ -54,8 +56,8 @@ const Thumb = ({ src, label, size = 42 }: { src?: string; label: string; size?: 
     )
 }
 
-const STEPS: Status[] = ["pending", "preparing", "out of delivery", "delivered"]
-const Tracker = ({ status }: { status: Status }) => {
+export const STEPS: Status[] = ["pending", "preparing", "out of delivery", "delivered"]
+export const Tracker = ({ status }: { status: Status }) => {
     if (status === "cancelled") return <p className="ov-cancelled">This order was cancelled</p>
     const at = STEPS.indexOf(status)
     return (
@@ -76,13 +78,16 @@ const Tracker = ({ status }: { status: Status }) => {
 //     </div>
 // )
 
-const itemImage = (i: OrderItem) => i.item?.image ?? i.item?.image
-const itemName = (i: OrderItem) => i.name ?? i.item?.name ?? "Item"
+export const itemImage = (i: OrderItem) => i.item?.image ?? i.item?.image
+export const itemName = (i: OrderItem) => i.name ?? i.item?.name ?? "Item"
+
 const UserOrderCardItem = ({ items: o }: UserOrderCardItem) => {
+    const navigate = useNavigate()
     // const [open, setOpen] = useState<string | null>(null)
     // const isOpen = open === o._id
     const allItems = o.shopOrder.flatMap((s) => s.shopOrderItems ?? [])
     const itemCount = allItems.reduce((n, i) => n + i.quantity, 0)
+
 
     return (
         <li key={o._id} className="ov-card flex flex-col">
@@ -102,6 +107,15 @@ const UserOrderCardItem = ({ items: o }: UserOrderCardItem) => {
                     <small className="text-white!">
                         {dateText(o.createdAt)} · {itemCount} item{itemCount === 1 ? "" : "s"}
                     </small>
+                </span>
+                <span>
+                    <Button
+                        btnTxt={"Track Order"}
+                        onClick={() => navigate(`/track?orderId=${o?._id}`)}
+                        type="button"
+                        btnColor="warning"
+                        className={"py-2! text-xs! ring-2 ring-white"}
+                    />
                 </span>
                 <span className="ov-amount">
                     <b>{money(o.totalAmount)}</b>
@@ -142,6 +156,7 @@ const UserOrderCardItem = ({ items: o }: UserOrderCardItem) => {
                             </span>
                             {s.subTotal !== undefined && <b>{money(s.subTotal)}</b>}
                         </div>
+
                     </section>
                 ))}
             </div>

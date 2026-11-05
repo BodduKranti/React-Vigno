@@ -48,7 +48,15 @@ export const ROUTES = Object.freeze({
     DELIVERY_BOY_ACCEPT_ORDER: "/shop/order/acceptOrder",
 
     //get current order
-    GET_CURRENT_ORDER: `/shop/order/get-current-oreder`
+    GET_CURRENT_ORDER: `/shop/order/get-current-oreder`,
+
+    //Get Order byId
+    GET_USER_ORDER_BY_ID: `/shop/order/getOrderByID`,
+
+    //DELIEVY BOY SEND OTP TO USER VIA EMAIL
+    SEND_DELIVERY_OTP: `/shop/order/send-deliveryOTP`,
+    // VERIFY DELIVERY OTP VIA DELIVERY BOY
+    VERYFIE_DELIVERY_OTP: `/shop/order/verify-deliveryOTP`,
 });
 
 
@@ -76,8 +84,8 @@ export interface userSignIn {
 }
 
 export enum itemFoodType {
-    "no-veg" = "Non Vegetrian",
-    "veg" = "Vegeterian"
+    "no-veg" = "Non Veg",
+    "veg" = "Veg"
 }
 
 export type Status = "pending" | "preparing" | "out of delivery" | "delivered" | "cancelled"
