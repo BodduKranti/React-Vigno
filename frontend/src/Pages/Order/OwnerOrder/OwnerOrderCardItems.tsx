@@ -24,7 +24,8 @@ interface OwnerOrder {
     createdAt?: string
     paymentMethod?: string | undefined
     user: { fullname: string; email?: string; mobile?: string }
-    deliveryAddress?: { text: string; latitude?: number; longitude?: number }
+    deliveryAddress?: { text: string; latitude?: number; longitude?: number },
+    payment: boolean,
     shopOrder: {
         _id: string
         status: Status
@@ -99,7 +100,8 @@ const OwnerOrderCardItems = ({ items: order, }: Props) => {
             toast.error(err?.response?.data?.message || "Failed to update status")
         }
     }
-    console.log('status', status)
+    console.log('order', order)
+
     return (
         <article key={order._id} className={`w-full! oc s-${status.replace(/\s/g, "-")}`}>
             {/*USer details*/}
@@ -128,6 +130,14 @@ const OwnerOrderCardItems = ({ items: order, }: Props) => {
                         {user.email}
                     </a>
                 )}
+                {order?.paymentMethod === 'online' ?
+                    <a className=" capitalize">
+                        Payment:  {order?.payment ? 'True' : 'False'}
+                    </a> :
+                    <a className=" capitalize">
+                        Payment Method:  {order?.paymentMethod}
+                    </a>
+                }
             </div>
 
             {addr && (

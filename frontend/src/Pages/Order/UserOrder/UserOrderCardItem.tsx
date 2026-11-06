@@ -30,7 +30,8 @@ interface Order {
     createdAt: string
     paymentMethod?: string
     totalAmount?: number
-    shopOrder: ShopOrder[]
+    shopOrder: ShopOrder[],
+    payment: any
 }
 interface UserOrderCardItem {
     items: Order
@@ -119,7 +120,10 @@ const UserOrderCardItem = ({ items: o }: UserOrderCardItem) => {
                 </span>
                 <span className="ov-amount">
                     <b>{money(o.totalAmount)}</b>
-                    <small className="text-white!">{o.paymentMethod?.toUpperCase()}</small>
+                    <small className="text-white!">
+                        {o.paymentMethod === 'online' ? o.payment ? "true" : "false" : <>{o.paymentMethod?.toUpperCase()}</>}
+
+                    </small>
                 </span>
                 {/* <span className="ov-chev" aria-hidden="true" /> */}
             </button>

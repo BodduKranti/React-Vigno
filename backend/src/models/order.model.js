@@ -81,7 +81,19 @@ const orderedSchema = new mongoose.Schema({
     totalAmount: {
         type: Number,
     },
-    shopOrder: [shopOrderSchema]
+    shopOrder: [shopOrderSchema],
+    payment: {
+        type: Boolean,
+        default: false
+    },
+    razorpayOrderId: {
+        type: String,
+        default: ''
+    },
+    razorpayPaymentId: {
+        type: String,
+        default: ''
+    }
 }, { timestamps: true })
 
 export const Order = mongoose.model('order', orderedSchema)

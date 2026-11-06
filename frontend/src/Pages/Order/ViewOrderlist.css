@@ -442,9 +442,9 @@
 }
 
 @media (max-width: 520px) {
-    .ov-summary {
+    /* .ov-summary {
         grid-template-columns: 1fr auto;
-    }
+    } */
 
     .ov-stack {
         grid-column: 1 / -1;

@@ -2,6 +2,7 @@ import OwnerOrderCardItems from "./OwnerOrderCardItems"
 import "./OwnerOrderCard.css"
 import { useAppSelecter } from "../../../Store/hook"
 import NoitemShopfound from "../../../components/NoitemShopfound"
+import React from "react"
 
 
 
@@ -22,13 +23,14 @@ const OwnerOrderCard = () => {
             <div className="w-full space-y-4">
                 <p>{order?.length ?? 0} orders placed</p>
                 <div className="w-full grid grid-cols-1 gap-3">
-                    {order?.map((list: any) => (
-                        <OwnerOrderCardItems
-                            items={list}
-                            key={list?._id}
-                        // onStatusChange={orderStatus}
-                        // availbleBoys={availbleBoys[`${list?._id}-${list?.shopOrder?.shop?._id}`] ?? []}
-                        />
+                    {order?.map((list: any, index) => (
+                        <React.Fragment key={index}>
+                            <OwnerOrderCardItems
+                                items={list}
+                                key={list?._id}
+                            />
+                        </React.Fragment>
+
                     ))}
                 </div>
             </div>

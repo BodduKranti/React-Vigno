@@ -31,3 +31,4 @@ export const sendDeliveryOTP = () => usePostApi()
 export const verifyDeliveryOTP = () => usePostApi()
 
 // searchItems
+export const verifyOrderPayment = () => usePostApi()

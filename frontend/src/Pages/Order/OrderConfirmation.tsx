@@ -81,7 +81,7 @@ export default function OrderConfirmation({
                     btnTxt={"View Order"}
                     onClick={onViewOrder}
                     type="button"
-                    className={`min-w-37.5`}
+                    className={`min-w-40`}
                 />
 
                 <Button
@@ -89,7 +89,7 @@ export default function OrderConfirmation({
                     btnTxt={"Continue shopping"}
                     onClick={onContinue}
                     type="button"
-                    className={`min-w-37.5`}
+                    className={`min-w-40`}
                 />
 
 

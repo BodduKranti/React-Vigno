@@ -1,3 +1,5 @@
+
+import Razorpay from 'razorpay'
 import crypto from "crypto";
 import DeliveryAssign from "../models/deliveryAssign.model.js"
 import { Order } from "../models/order.model.js"
@@ -5,10 +7,24 @@ import Shop from "../models/shop.model.js"
 import User from "../models/user.model.js"
 import { ShopItems } from "../models/shopitems.model.js"
 import { sendDeliveryOTPemail } from "../utils/Mail.js"
+import { ENV } from '../config/ENV.js';
+
+
+//ROZARPAY instance
+let instance = new Razorpay({
+    key_id: ENV.ROZAR_API_KEY,
+    key_secret: ENV.ROZAR_SECRET_KEY,
+});
 
 export const placeOrderController = async (req, res) => {
     try {
-        const { cartItems, paymentMethod, deliveryAddress, totalAmount } = req.body
+        const {
+            cartItems,
+            paymentMethod,
+            deliveryAddress,
+            totalAmount
+        } = req.body
+
         //cartitems
         if (cartItems.length === 0 || !cartItems) {
             return res.status(400).json({
@@ -58,6 +74,38 @@ export const placeOrderController = async (req, res) => {
             }
         }))
 
+
+        //PAymentmethod 
+        if (paymentMethod === 'online') {
+            //order create
+            const razorOrder = await instance.orders.create({
+                //user pay total
+                amount: Math.round(totalAmount * 100),  //conver to rupyee to paise 
+                currency: "INR",
+                receipt: `receipt_${Date.now()}`//download the receipt
+            })
+
+            // Order
+            const newOrder = await Order.create({
+                user: req.userId,
+                paymentMethod,
+                deliveryAddress,
+                totalAmount,
+                shopOrder: shopOrder,
+                razorpayOrderId: razorOrder?.id,
+                payment: false,
+
+                // razorpayPayment
+                // payment
+            })
+            return res.status(200).json({
+                razorOrder,
+                orderId: newOrder._id,
+                // key_id: ENV.ROZAR_API_KEY,
+            })
+
+        }
+
         // Order
         const newOrder = await Order.create({
             user: req.userId,
@@ -67,6 +115,16 @@ export const placeOrderController = async (req, res) => {
             shopOrder: shopOrder
         })
 
+        await newOrder.populate([
+            {
+                path: "shopOrder.shopOrderItems.item",
+                select: "name image price"
+            },
+            {
+                path: "shopOrder.shop",
+                select: "name"
+            }
+        ])
 
         return res.status(200).json(newOrder)
 
@@ -134,7 +192,8 @@ export const getOwnerOrder = async (req, res) => {
             shopOrder: order.shopOrder.find(
                 (o) => String(o.owner?._id) === String(req.userId)
             ),
-            createdAt: order.createdAt
+            createdAt: order.createdAt,
+            payment: order.payment
         }));
 
         console.log(' filteredOrder', filteredOrder)
@@ -718,3 +777,50 @@ export const verifyDeliveryOTP = async (req, res) => {
         });
     }
 };
+
+//Online Payment Rozarpay
+export const RozarPaymentVerify = async (req, res) => {
+    try {
+        // after click on the payment get the these details on the frontend
+        // when click on the verify button then we send these details
+        const { razorpay_payment_id, orderId } = req.body
+
+        //payment check 
+        const payment = await instance.payments.fetch(razorpay_payment_id)
+
+        if (!payment || payment.status !== "captured") {
+
+            return res.status(400).json({
+                message: `Payment does not captured`
+            })
+        }
+
+        const order = await Order.findById(orderId)
+
+        if (!order) {
+            return res.status(400).json({
+                message: `Order not found`
+            })
+        }
+
+        order.payment = true
+        order.razorpayPaymentId = razorpay_payment_id
+        await order.save()
+
+        await order.populate([
+            {
+                path: "shopOrder.shopOrderItems.item",
+                select: "name image price"
+            },
+            {
+                path: "shopOrder.shop",
+                select: "name"
+            }
+        ])
+
+        return res.status(200).json(order)
+
+    } catch (error) {
+        return res.status(500).json({ message: `Payment verify getting error ${error}` })
+    }
+}
