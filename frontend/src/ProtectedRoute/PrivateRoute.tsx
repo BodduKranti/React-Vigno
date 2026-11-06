@@ -61,7 +61,6 @@ const PrivateRoute = ({ allowRoles }: PrivateRouteProps) => {
         const socketInstance = io(serverUrl, { withCredentials: true })
         dispatch(setSocketId(socketInstance))
         socketInstance.on('connect', () => {
-
             if (user) {
                 //we send our userId to the server so that it can identify the user and join the appropriate room
                 socketInstance.emit('identify', { userId: user._id });

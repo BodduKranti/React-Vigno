@@ -4,7 +4,7 @@ import { useAppSelecter } from "../../Store/hook"
 
 const DeliveryBoyDetails = () => {
     const { userData } = useAppSelecter((state) => state.userInfo)
-    console.log('full', userData)
+
     return (
         <div className="overflow-hidden rounded-3xl bg-white shadow-xl shadow-orange-100">
 

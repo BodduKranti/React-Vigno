@@ -258,7 +258,8 @@
     font-weight: 600;
 }
 
-.oc-update select {
+.oc-update select,
+.oc-update label {
     min-width: 180px;
     padding: 9px 12px;
     border: 1.5px solid var(--c);
@@ -271,7 +272,8 @@
     cursor: pointer;
 }
 
-.oc-update select:disabled {
+.oc-update select:disabled,
+.oc-update label:disabled {
     opacity: 0.55;
     cursor: not-allowed;
 }

@@ -3,14 +3,10 @@ import { acceptAssignment } from "../../hooks/useShop"
 import { ROUTES } from "../../type";
 import DeliveryOrderItem from "./DeliveryOrderItem"
 import { ErrorAxios } from "../../services/ErrorIntersects";
-import { useGetApi } from "../../hooks/useAxiosServices";
 
 const DeliveryOrderList = ({ availbleAssignments }: { availbleAssignments: any }) => {
 
     const acceptAssignmentOrder = acceptAssignment();
-    // const [assignOrder, setAssignOrder] = useState<any>(true)
-    // const { data: current } = getCurrentOrder()
-    const { data } = useGetApi(`${ROUTES.GET_CURRENT_ORDER}`)
 
     const acptAssignOrder = (assignmentId: any) => {
         acceptAssignmentOrder.mutate({

@@ -147,19 +147,23 @@ const OwnerOrderCardItems = ({ items: order, }: Props) => {
             <footer className="oc-foot">
                 <label className="oc-update py-2! text-xs!">
                     <span>Update status</span>
-                    <select
-                        value={status}
-                        disabled={closed}
-                        onChange={(e) =>
-                            change(e.target.value as Status)
-                        }
-                    >
-                        {STATUSES.map((st) => (
-                            <option key={st} value={st}>
-                                {st}
-                            </option>
-                        ))}
-                    </select>
+                    {
+                        status === 'delivered' ? <label>Delivered</label> :
+                            <select
+                                value={status}
+                                disabled={closed}
+                                onChange={(e) =>
+                                    change(e.target.value as Status)
+                                }
+                            >
+                                {STATUSES.map((st) => (
+                                    <option key={st} value={st}>
+                                        {st}
+                                    </option>
+                                ))}
+                            </select>
+                    }
+
                 </label>
                 <div className="oc-total">
                     <small>{paymentMethods[order.paymentMethod as keyof typeof paymentMethods] ?? "Total"}</small>

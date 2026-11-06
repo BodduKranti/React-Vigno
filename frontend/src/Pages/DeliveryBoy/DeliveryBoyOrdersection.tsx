@@ -25,7 +25,7 @@ const DeliveryBoyOrdersection = () => {
         return () => {
             socket?.off("newDeliveryAssignment")
         }
-    }, [])
+    }, [socket])
 
     return (
         <div className="w-full">
