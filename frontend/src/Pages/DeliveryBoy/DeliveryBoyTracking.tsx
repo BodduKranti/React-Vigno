@@ -45,7 +45,7 @@ const DeliveryBoyTracking = ({ currentorder }: { currentorder: any }) => {
 
     return (
 
-        <div className='w-full h-100  border-15 border-white shadow-xl ring-1 ring-orange-500 rounded-md'>
+        <div className='w-full h-100 relative z-0  border-15 border-white shadow-xl ring-1 ring-orange-500 rounded-md'>
             <MapContainer
                 className="w-full h-full p-5"
                 center={[deliveryBoyLon, deliveryBoyLat]}

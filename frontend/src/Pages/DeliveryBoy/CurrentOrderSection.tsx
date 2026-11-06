@@ -44,11 +44,13 @@ interface allDetails {
 }
 
 interface currentOrderprops {
-    currentorder: allDetails
+    currentorder: allDetails,
+    refetchCurrentOrder: () => void,
+    refetchAvailableOrders: () => void
 }
 
 
-const CurrentOrderSection = ({ currentorder }: currentOrderprops) => {
+const CurrentOrderSection = ({ currentorder, refetchCurrentOrder, refetchAvailableOrders }: currentOrderprops) => {
 
     const [showOtpbox, setShowOtpbox] = useState<boolean>(false)
     const [loader, setLoader] = useState<boolean>(false)
@@ -70,6 +72,7 @@ const CurrentOrderSection = ({ currentorder }: currentOrderprops) => {
                 toast.success(data?.message)
                 setShowOtpbox(true)
                 setLoader(false)
+
             },
             onError: (error: any) => {
                 const errmsg = ErrorAxios(error)
@@ -94,6 +97,8 @@ const CurrentOrderSection = ({ currentorder }: currentOrderprops) => {
             onSuccess: (data: any) => {
                 toast.success(data?.message)
                 setShowOtpbox(false)
+                refetchCurrentOrder()
+                refetchAvailableOrders()
             },
             onError: (error: any) => {
                 const errmsg = ErrorAxios(error)

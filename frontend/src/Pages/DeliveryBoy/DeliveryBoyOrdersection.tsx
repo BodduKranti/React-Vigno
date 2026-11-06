@@ -4,21 +4,66 @@ import { getAssignments } from "../../hooks/useShop"
 import { ROUTES } from "../../type"
 import DeliveryOrderList from "./DeliveryOrderList"
 import CurrentOrderSection from "./CurrentOrderSection"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useAppSelecter } from "../../Store/hook"
 
 const DeliveryBoyOrdersection = () => {
-    const { socket, userData } = useAppSelecter((state) => state.userInfo)
+    const { socket, userData, } = useAppSelecter((state) => state.userInfo)
     const { data, refetch } = getAssignments()
     const availbleAssignments = Array.isArray(data) && data || []
+    const [noCurrentOrder, setNoCurrentOrder] = useState(true)
     // const { data: current } = getCurrentOrder()
-    const { data: currentorder }: any = useGetApi(`${ROUTES.GET_CURRENT_ORDER}`)
+    const { data: currentorder, isError, refetch: refetchCurrentOrder }: any = useGetApi(`${ROUTES.GET_CURRENT_ORDER}`, undefined, noCurrentOrder)
+
+
+
+    useEffect(() => {
+
+        if (isError) {
+            setNoCurrentOrder(false)
+        }
+        console.log('isError', isError)
+    }, [isError])
+
+
+
+    useEffect(() => {
+        if (!socket || userData?.role !== "deliveryboy") {
+            return
+        }
+        let watch: any = null;
+        if (navigator.geolocation) {
+            watch = navigator.geolocation.watchPosition(position => {
+                const { latitude, longitude } = position.coords
+                socket.emit("updateLocation", {
+                    userId: userData?._id,
+                    longitude,
+                    latitude
+                })
+            }), (error: any) => {
+                console.error("Error getting location:", error)
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 0
+            }
+        }
+
+
+        return () => {
+            if (watch && navigator.geolocation) {
+                navigator.geolocation.clearWatch(watch)
+            }
+        }
+    }, [socket, userData?.id, userData?.role])
 
     useEffect(() => {
         socket?.on("newDeliveryAssignment", (data: any) => {
             console.log('new order', data)
             if (data?.sentTo === userData?.id) {
                 refetch()
+                refetchCurrentOrder()
             }
         })
 
@@ -27,13 +72,17 @@ const DeliveryBoyOrdersection = () => {
         }
     }, [socket])
 
+    console.log('currentorder', currentorder)
+
     return (
         <div className="w-full">
 
             {
-                currentorder ?
+                !isError && currentorder ?
                     <CurrentOrderSection
                         currentorder={currentorder}
+                        refetchCurrentOrder={refetchCurrentOrder}
+                        refetchAvailableOrders={refetch}
                     />
                     :
                     <section className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-orange-100">
@@ -53,7 +102,7 @@ const DeliveryBoyOrdersection = () => {
                                     message1="No available orders"
                                     message2="New orders near you will show up here."
                                 /> :
-                                <DeliveryOrderList availbleAssignments={availbleAssignments} />
+                                <DeliveryOrderList availbleAssignments={availbleAssignments} refetch={refetch} />
                         }
                     </section>
 

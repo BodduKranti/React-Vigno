@@ -109,15 +109,7 @@ const UserOrderCardItem = ({ items: o }: UserOrderCardItem) => {
                         {dateText(o.createdAt)} · {itemCount} item{itemCount === 1 ? "" : "s"}
                     </small>
                 </span>
-                <span>
-                    <Button
-                        btnTxt={"Track Order"}
-                        onClick={() => navigate(`/track?orderId=${o?._id}`)}
-                        type="button"
-                        btnColor="warning"
-                        className={"py-2! text-xs! ring-2 ring-white"}
-                    />
-                </span>
+
                 <span className="ov-amount">
                     <b>{money(o.totalAmount)}</b>
                     <small className="text-white!">
@@ -134,6 +126,15 @@ const UserOrderCardItem = ({ items: o }: UserOrderCardItem) => {
                         <div className="ov-shop-head ">
                             <Thumb src={s.shop?.image} label={s.shop?.name ?? "S"} size={45} />
                             <h3>{s.shop?.name ?? "Shop"}</h3>
+                            <span>
+                                <Button
+                                    btnTxt={"Track Order"}
+                                    onClick={() => navigate(`/track?orderid=${o._id}&shoporderId=${s?.shop?._id}`)}
+                                    type="button"
+                                    btnColor="warning"
+                                    className={"py-2! text-xs! ring-2 ring-white"}
+                                />
+                            </span>
                             <span className={`ov-pill s-${s.status.replace(/\s/g, "-")}`}>{s.status}</span>
                         </div>
 

@@ -4,7 +4,7 @@ import { ROUTES } from "../../type";
 import DeliveryOrderItem from "./DeliveryOrderItem"
 import { ErrorAxios } from "../../services/ErrorIntersects";
 
-const DeliveryOrderList = ({ availbleAssignments }: { availbleAssignments: any }) => {
+const DeliveryOrderList = ({ availbleAssignments, refetch }: { availbleAssignments: any, refetch: () => void }) => {
 
     const acceptAssignmentOrder = acceptAssignment();
 
@@ -15,6 +15,7 @@ const DeliveryOrderList = ({ availbleAssignments }: { availbleAssignments: any }
         }, {
             onSuccess: (data: any) => {
                 toast.success(data?.message)
+                refetch()
                 // setAssignOrder(true)
             },
             onError: (error: any) => {

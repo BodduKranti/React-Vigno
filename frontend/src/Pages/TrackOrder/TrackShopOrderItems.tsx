@@ -3,6 +3,7 @@ import { itemImage, itemName, money, Thumb, Tracker } from "../Order/UserOrder/U
 import TrackDeliveryBoyDetails from "./TrackDeliveryBoyDetails";
 import DeliveryBoyTracking from "../DeliveryBoy/DeliveryBoyTracking";
 import DeliveredSuccess from "./DeliveredSuccess/DeliveredSuccess";
+import { useAppSelecter } from "../../Store/hook";
 
 interface shopOderGetItem {
     shop: shopOrderDetails,
@@ -10,6 +11,9 @@ interface shopOderGetItem {
 }
 
 const TrackShopOrderItems = ({ shop: s, data }: shopOderGetItem) => {
+    const { location } = useAppSelecter((state) => state.dblivelocation)
+
+    console.log('deliveryBoyLocation', location)
     return (
         <div className="ov-body border-t-0! grid grid-cols-1 md:flex items-center gap-4 ">
             <div className="w-full md:w-1/2">
@@ -60,7 +64,7 @@ const TrackShopOrderItems = ({ shop: s, data }: shopOderGetItem) => {
                     s.status !== 'delivered' && s?.assignedDeliveryBoy &&
                     <DeliveryBoyTracking
                         currentorder={{
-                            deliveryBoylocation: {
+                            deliveryBoylocation: location?.[s?.assignedDeliveryBoy?._id] || {
                                 lat: Number(s?.assignedDeliveryBoy?.location?.coordinates[1]),
                                 lon: Number(s?.assignedDeliveryBoy?.location?.coordinates[0])
                             },

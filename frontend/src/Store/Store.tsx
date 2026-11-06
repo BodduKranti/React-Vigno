@@ -3,13 +3,14 @@ import userAuthReducer from './Reducer/AuthSlice/UserSlice'
 import getMyshopdataReducer from './Reducer/ShopSlice/ShopSlice'
 import mapReducer from './Reducer/MapSlice/MapSlice'
 import SearchFoodReducer from './Reducer/SearchFoodslice/SearchFoodslice'
-
+import DeliveryBoyTrackingLocationReducer from './Reducer/DeliveryBoyLiveLocation/DeliveryBoyLiveLocation'
 
 const rootReducer = combineReducers({
     userInfo: userAuthReducer,
     getMyshopdata: getMyshopdataReducer,
     map: mapReducer,
-    searchFoodlist: SearchFoodReducer
+    searchFoodlist: SearchFoodReducer,
+    dblivelocation: DeliveryBoyTrackingLocationReducer
 })
 
 export const MainStore = configureStore({
