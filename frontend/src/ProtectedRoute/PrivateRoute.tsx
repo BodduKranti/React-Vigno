@@ -1,21 +1,23 @@
-import { useEffect } from "react";
 import { Navigate, Outlet, useLocation } from "react-router";
-import { io } from "socket.io-client";
-
 import { useAuthContext } from "../utils/ContextApi";
 import InnerNavbar from "../components/Header/InnerNavbar";
 import Footer from "../components/Footer/Footer";
 import DeliveryBoyNavbar from "../components/Header/DeliveryBoyNavbar";
 import OwnerNavbar from "../components/Header/OwnerNavbar";
-import ScrollToTop from "../utils/ScrollToTop";
 import type { UserRole } from "../type";
-import { setSocketId } from "../Store/Reducer/AuthSlice/UserSlice";
-import { useAppDispatch } from "../Store/hook";
-export const serverUrl = "http://localhost:5000";
+import ScrollToTop from "../utils/ScrollToTop";
+import { useEffect } from "react";
 
 interface PrivateRouteProps {
     allowRoles?: UserRole[];
 }
+
+import { io } from "socket.io-client";
+import { setSocketId } from "../Store/Reducer/AuthSlice/UserSlice";
+import { useAppDispatch } from "../Store/hook";
+
+export const serverUrl = "http://localhost:5000";
+
 
 const FullPageLoader = () => (
     <div className="flex min-h-screen items-center justify-center">
@@ -27,32 +29,7 @@ const PrivateRoute = ({ allowRoles }: PrivateRouteProps) => {
     const dispatch = useAppDispatch();
     const { user } = useAuthContext();
     const location = useLocation();
-
-    const userId = user._id;
-    const isLoggedIn = !user.loading && user.isAuthenitcate && !!userId;
-
-    // All hooks stay above every conditional return
-    useEffect(() => {
-        if (!isLoggedIn) return;
-
-        const socketInstance = io(serverUrl, { withCredentials: true });
-
-        socketInstance.on("connect", () => {
-            dispatch(setSocketId(socketInstance.id ?? null)); // string only
-            // re-identify on every (re)connect, since the socket id changes
-            socketInstance.emit("identify", { userId });
-        });
-
-        socketInstance.on("disconnect", () => {
-            dispatch(setSocketId(null));
-        });
-
-        return () => {
-            socketInstance.disconnect();
-        };
-    }, [isLoggedIn, userId, dispatch]);
-
-    // 1. Wait until the session is restored
+    // 1. Wait until the session is restored (prevents redirect on refresh)
     if (user.loading) return <FullPageLoader />;
 
     // 2. Not logged in
@@ -60,13 +37,13 @@ const PrivateRoute = ({ allowRoles }: PrivateRouteProps) => {
         return <Navigate to="/login" replace state={{ from: location }} />;
     }
 
-    // 3. Role not allowed
+    // 3. Logged in, but role not allowed
     const role = user.role as UserRole | null | undefined;
     if (allowRoles && (!role || !allowRoles.includes(role))) {
         return <Navigate to="/unauthorized" replace />;
     }
 
-    // 4. Navbar/footer by role
+    // 4. Pick navbar/footer by role
     const navbar =
         role === "owner" ? (
             <OwnerNavbar user={user} />
@@ -76,7 +53,25 @@ const PrivateRoute = ({ allowRoles }: PrivateRouteProps) => {
             <InnerNavbar user={user} />
         );
 
-    const showFooter = role !== "owner" && role !== "deliveryboy";
+    const showFooter = role !== "owner" && role !== 'deliveryboy';
+
+
+    //socket connection
+    useEffect(() => {
+        const socketInstance = io(serverUrl, { withCredentials: true })
+        dispatch(setSocketId(socketInstance))
+        socketInstance.on('connect', () => {
+
+            if (user) {
+                //we send our userId to the server so that it can identify the user and join the appropriate room
+                socketInstance.emit('identify', { userId: user._id });
+            }
+        })
+
+        return () => {
+            socketInstance.disconnect();
+        };
+    }, [user._id])
 
     return (
         <div className="innerBg min-h-screen w-full">

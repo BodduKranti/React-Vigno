@@ -21,20 +21,26 @@ const UserOrderCard = () => {
     }, [order])
 
     useEffect(() => {
-        socket.on('updateStatus', (data: any) => {
 
-            const { orderId, shopId, status, userId } = data
-            if (userId === userData?._id) {
-                dispatch(updateRealtimeorderStatus({ orderId, shopId, status, userId }))
-            }
-        })
+        if (socket) {
+            socket.on('updateStatus', (data: any) => {
 
-        return () => {
-            if (socket) {
-                socket.off('newOrder')
-                socket.off('updateStatus')
+                const { orderId, shopId, status, userId } = data
+                if (userId === userData?._id) {
+                    dispatch(updateRealtimeorderStatus({ orderId, shopId, status, userId }))
+                }
+            })
+
+            return () => {
+                if (socket) {
+                    socket.off('newOrder')
+                    socket.off('updateStatus')
+                }
             }
         }
+
+
+
     }, [socket, order])
 
 
