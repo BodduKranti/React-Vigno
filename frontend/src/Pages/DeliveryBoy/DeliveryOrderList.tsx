@@ -28,7 +28,6 @@ const DeliveryOrderList = ({ availbleAssignments }: { availbleAssignments: any }
         })
     }
 
-    console.log('data click', data)
 
     return (
         <div className="w-full">

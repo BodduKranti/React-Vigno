@@ -340,6 +340,73 @@ export const updateOrderstatus = async (req, res) => {
 
         let deliveryBoyPayload = [];
 
+        //Before socket io correct code
+        // if (status === 'out of delivery' && !shopOrder?.assignment) {
+        //     const { latitude, longitude } = order?.deliveryAddress
+        //     const nearbyDeliveryboys = await User.find({
+        //         role: 'deliveryboy',
+        //         location: {
+        //             $near: {
+        //                 $geometry: {
+        //                     type: "Point",
+        //                     coordinates: [Number(latitude), Number(longitude)],
+        //                     $maxDistance: 5000
+        //                 }
+        //             }
+        //         }
+        //     })
+
+        //     const nearbyUserids = nearbyDeliveryboys.map(b => b._id)
+
+        //     const busyIds = await DeliveryAssign.find({
+        //         assignedTo: { $in: nearbyUserids },
+        //         status: { $nin: ['broadcasted', 'completed'] }
+        //     }).distinct("assignedTo")
+
+        //     //duplcation avoid below this
+        //     // const busyIdSet = new Set(busyIds.map((id) => String(id)))
+        //     const busyIdSet = new Set(busyIds.map(String));
+        //     // Filter available delivery boys
+        //     const availbelboys = nearbyDeliveryboys.filter((boy) => !busyIdSet.has(boy._id));
+
+        //     console.log('availbelboys', availbelboys)
+
+        //     deliveryBoyPayload = availbelboys.map((boy) => ({
+        //         id: boy._id,
+        //         fullName: boy.fullname,
+        //         longitude: JSON.stringify(boy.location.coordinates[0]),
+        //         latitude: JSON.stringify(boy.location.coordinates[1]),
+        //         mobile: boy.mobile
+        //     }));
+
+        //     const candidates = availbelboys.map((b) => String(b._id))
+
+        //     if (candidates?.length == 0) {
+        //         await order.save()
+        //         return res.status(400).json({ message: `There is no Delivery boy availble` })
+        //     }
+        //     //  console.dir('11090'.availbelboys[0].location, { depth: null });
+        //     const deliveryAssignment = await DeliveryAssign.create({
+        //         order: order?._id,
+        //         shop: shopOrder?.shop,
+        //         shopOrderId: shopOrder?._id,
+        //         broadcastedTo: candidates,
+        //         status: "broadcasted"
+        //     })
+        //     shopOrder.assignedDeliveryBoy = deliveryAssignment?.assignedTo
+        //     shopOrder.assignment = deliveryAssignment?._id
+        //     deliveryBoyPayload = availbelboys.map((b) => ({
+        //         id: b._id,
+        //         fullName: b?.fullname,
+        //         longitude: JSON.stringify(b?.location?.coordinates?.[1]),
+        //         latitude: JSON.stringify(b?.location?.coordinates?.[0]),
+        //         mobile: b.mobile
+        //     }))
+
+        // }
+
+
+        //after socket io use code
         if (status === 'out of delivery' && !shopOrder?.assignment) {
             const { latitude, longitude } = order?.deliveryAddress
             const nearbyDeliveryboys = await User.find({
@@ -402,6 +469,33 @@ export const updateOrderstatus = async (req, res) => {
                 mobile: b.mobile
             }))
 
+
+            await deliveryAssignment.populate([
+                { path: "order", model: Order, populate: { path: "user", select: "fullname email mobile" } },
+                { path: "shop", model: Shop, select: "name" }
+            ])
+
+
+            //socket implementation
+            const io = req.app.get("io");
+            if (io) {
+                availbelboys.forEach((boy) => {
+                    const deliveryBoySocketId = boy?.socketId;
+                    if (deliveryBoySocketId) {
+                        io.to(deliveryBoySocketId).
+                            emit("newDeliveryAssignment", {
+                                senTo: boy._id,
+                                assignmentId: deliveryAssignment._id,
+                                orderId: deliveryAssignment.order._id,
+                                shopOrderId: deliveryAssignment.shopOrderId,
+                                shopName: deliveryAssignment.shop?.name,
+                                deliveryAdd: deliveryAssignment.order.deliveryAddress,
+                                items: deliveryAssignment?.order?.shopOrder?.find(so => so._id.equals(deliveryAssignment.shopOrderId))?.shopOrderItems || [],
+                                subtotal: deliveryAssignment?.order?.shopOrder?.find(so => so._id.equals(deliveryAssignment.shopOrderId))?.subTotal || 0
+                            });
+                    }
+                });
+            }
         }
 
         //

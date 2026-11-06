@@ -4,13 +4,29 @@ import { getAssignments } from "../../hooks/useShop"
 import { ROUTES } from "../../type"
 import DeliveryOrderList from "./DeliveryOrderList"
 import CurrentOrderSection from "./CurrentOrderSection"
+import { useEffect } from "react"
+import { useAppSelecter } from "../../Store/hook"
 
 const DeliveryBoyOrdersection = () => {
-    const { data } = getAssignments()
+    const { socket, userData } = useAppSelecter((state) => state.userInfo)
+    const { data, refetch } = getAssignments()
     const availbleAssignments = Array.isArray(data) && data || []
     // const { data: current } = getCurrentOrder()
     const { data: currentorder }: any = useGetApi(`${ROUTES.GET_CURRENT_ORDER}`)
-    console.log('list', currentorder)
+
+    useEffect(() => {
+        socket?.on("newDeliveryAssignment", (data: any) => {
+            console.log('new order', data)
+            if (data?.sentTo === userData?.id) {
+                refetch()
+            }
+        })
+
+        return () => {
+            socket?.off("newDeliveryAssignment")
+        }
+    }, [])
+
     return (
         <div className="w-full">
 
