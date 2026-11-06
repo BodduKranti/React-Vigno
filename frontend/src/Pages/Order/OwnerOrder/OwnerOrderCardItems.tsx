@@ -62,21 +62,9 @@ const OwnerOrderCardItems = ({ items: order, }: Props) => {
         addr?.latitude !== undefined && addr?.longitude !== undefined
             ? `https://www.google.com/maps?q=${addr.latitude},${addr.longitude}`
             : undefined
-    // const [saving, setSaving] = useState(false)
     const closed =
         status === "delivered" ||
         status === "cancelled"
-
-    // const change = async (next: Status) => {
-
-
-
-    //     // if (next === status) return
-    //     setStatus(next)
-    //     // setSaving(true)
-    //     onStatusChange(orderId, shopId, status)
-
-    // }
 
     // const orderStatus = async (orderId: string, shopId: string, status: Status) => {
     const change = async (next: any) => {
@@ -100,7 +88,6 @@ const OwnerOrderCardItems = ({ items: order, }: Props) => {
             toast.error(err?.response?.data?.message || "Failed to update status")
         }
     }
-    console.log('order', order)
 
     return (
         <article key={order._id} className={`w-full! oc s-${status.replace(/\s/g, "-")}`}>

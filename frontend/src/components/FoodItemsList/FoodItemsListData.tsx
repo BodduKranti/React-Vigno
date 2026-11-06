@@ -45,7 +45,7 @@ const FoodItemsListData = ({ isLoading, foodItemsListData }: FoodItemsListprops)
                         >
                             {foodItemsListDataList.map((f: any) => (
                                 <SwiperSlide key={f._id}>
-                                    <FoodItems f={f} key={f._id} />
+                                    <FoodItems f={f} />
                                 </SwiperSlide>
                             ))}
                         </Swiper>

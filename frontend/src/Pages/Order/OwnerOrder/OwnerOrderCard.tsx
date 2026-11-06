@@ -1,15 +1,32 @@
 import OwnerOrderCardItems from "./OwnerOrderCardItems"
 import "./OwnerOrderCard.css"
-import { useAppSelecter } from "../../../Store/hook"
+import { useAppDispatch, useAppSelecter } from "../../../Store/hook"
 import NoitemShopfound from "../../../components/NoitemShopfound"
-import React from "react"
+import React, { useEffect } from "react"
+import { setMyOrder } from "../../../Store/Reducer/AuthSlice/UserSlice"
 
 
 
 const OwnerOrderCard = () => {
-    const { order } = useAppSelecter((state) => state.userInfo)
+    const { order, socket, userData } = useAppSelecter((state) => state.userInfo)
+    const dispatch = useAppDispatch()
     // riders keyed by "orderId-shopId"
+    useEffect(() => {
+        if (socket) {
+            socket.on('newOrder', (data: any) => {
+                if (data?.shopOrder?.owner?._id === userData?._id) {
+                    dispatch(setMyOrder([data, ...order]))
+                }
+            })
+        }
 
+        return () => {
+            if (socket) {
+                socket.off('newOrder')
+                socket.off('updateStatus')
+            }
+        }
+    }, [socket, order])
 
     return (
         order?.length == 0 ?

@@ -6,7 +6,6 @@ interface getData {
 }
 
 const TrackOrderSection = ({ data }: getData) => {
-    console.log('get Order Data', data)
     return (
         <div className="w-full bg-white rounded-2xl ring-4 ring-orange-500">
 

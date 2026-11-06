@@ -15,6 +15,7 @@ import { getUserfun } from "../Store/StoreThunk/GetUserThunk";
 import useUpdateLocation from "../hooks/useUpdateLocation";
 
 interface AuthUser {
+    _id?: string | null;          // added
     fullname?: string | null;
     role?: string | null;
     email?: string | null;
@@ -34,6 +35,7 @@ const AuthContext = createContext<authContextpropos | null>(null);
 // Change this to the exact role string your backend uses for riders
 const RIDER_ROLE = "deliveryboy";
 
+
 const AuthContextprovider = ({ children }: { children: React.ReactNode }) => {
     const dispatch = useAppDispatch();
     const userData = useAppSelecter((state) => state.userInfo);
@@ -49,6 +51,7 @@ const AuthContextprovider = ({ children }: { children: React.ReactNode }) => {
             email: userData?.email,
             isAuthenitcate: !!userData?.isAuthenitcate,
             loading: userData?.loading ?? true, // treat "unknown" as loading
+            _id: userData?._id ?? null
         }),
         [userData]
     );
@@ -78,6 +81,9 @@ const AuthContextprovider = ({ children }: { children: React.ReactNode }) => {
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [open]);
+
+
+
 
     // Memoized so consumers don't re-render on every provider render
     const value = useMemo(

@@ -102,7 +102,6 @@ const FoodItems = ({ f, quantity, onAdd, onRemove }: FoodItemsProps) => {
 
     return (
         <article
-            key={f._id}
             className={`group overflow-hidden rounded-3xl bg-white shadow-sm ring-1 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-orange-100 ${inCart ? "ring-orange-300" : "ring-orange-100"
                 }`}
         >
@@ -216,13 +215,5 @@ const FoodItems = ({ f, quantity, onAdd, onRemove }: FoodItemsProps) => {
         </article>
     );
 };
-
-export const FoodItemsGrid = ({ items = [] }: { items?: FoodItem[] }) => (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {items.map((it) => (
-            <FoodItems key={it._id} f={it} />
-        ))}
-    </div>
-);
 
 export default FoodItems;

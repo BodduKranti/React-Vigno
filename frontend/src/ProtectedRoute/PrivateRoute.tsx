@@ -1,11 +1,17 @@
+import { useEffect } from "react";
 import { Navigate, Outlet, useLocation } from "react-router";
+import { io } from "socket.io-client";
+
 import { useAuthContext } from "../utils/ContextApi";
 import InnerNavbar from "../components/Header/InnerNavbar";
 import Footer from "../components/Footer/Footer";
 import DeliveryBoyNavbar from "../components/Header/DeliveryBoyNavbar";
 import OwnerNavbar from "../components/Header/OwnerNavbar";
-import type { UserRole } from "../type";
 import ScrollToTop from "../utils/ScrollToTop";
+import type { UserRole } from "../type";
+import { setSocketId } from "../Store/Reducer/AuthSlice/UserSlice";
+import { useAppDispatch } from "../Store/hook";
+export const serverUrl = "http://localhost:5000";
 
 interface PrivateRouteProps {
     allowRoles?: UserRole[];
@@ -18,9 +24,35 @@ const FullPageLoader = () => (
 );
 
 const PrivateRoute = ({ allowRoles }: PrivateRouteProps) => {
+    const dispatch = useAppDispatch();
     const { user } = useAuthContext();
     const location = useLocation();
-    // 1. Wait until the session is restored (prevents redirect on refresh)
+
+    const userId = user._id;
+    const isLoggedIn = !user.loading && user.isAuthenitcate && !!userId;
+
+    // All hooks stay above every conditional return
+    useEffect(() => {
+        if (!isLoggedIn) return;
+
+        const socketInstance = io(serverUrl, { withCredentials: true });
+
+        socketInstance.on("connect", () => {
+            dispatch(setSocketId(socketInstance.id ?? null)); // string only
+            // re-identify on every (re)connect, since the socket id changes
+            socketInstance.emit("identify", { userId });
+        });
+
+        socketInstance.on("disconnect", () => {
+            dispatch(setSocketId(null));
+        });
+
+        return () => {
+            socketInstance.disconnect();
+        };
+    }, [isLoggedIn, userId, dispatch]);
+
+    // 1. Wait until the session is restored
     if (user.loading) return <FullPageLoader />;
 
     // 2. Not logged in
@@ -28,13 +60,13 @@ const PrivateRoute = ({ allowRoles }: PrivateRouteProps) => {
         return <Navigate to="/login" replace state={{ from: location }} />;
     }
 
-    // 3. Logged in, but role not allowed
+    // 3. Role not allowed
     const role = user.role as UserRole | null | undefined;
     if (allowRoles && (!role || !allowRoles.includes(role))) {
         return <Navigate to="/unauthorized" replace />;
     }
 
-    // 4. Pick navbar/footer by role
+    // 4. Navbar/footer by role
     const navbar =
         role === "owner" ? (
             <OwnerNavbar user={user} />
@@ -44,7 +76,7 @@ const PrivateRoute = ({ allowRoles }: PrivateRouteProps) => {
             <InnerNavbar user={user} />
         );
 
-    const showFooter = role !== "owner" && role !== 'deliveryboy';
+    const showFooter = role !== "owner" && role !== "deliveryboy";
 
     return (
         <div className="innerBg min-h-screen w-full">

@@ -106,7 +106,7 @@ export const placeOrderController = async (req, res) => {
 
         }
 
-        // Order
+        // Order Cash on delivery
         const newOrder = await Order.create({
             user: req.userId,
             paymentMethod,
@@ -114,6 +114,9 @@ export const placeOrderController = async (req, res) => {
             totalAmount,
             shopOrder: shopOrder
         })
+
+
+        //
 
         await newOrder.populate([
             {
@@ -123,8 +126,34 @@ export const placeOrderController = async (req, res) => {
             {
                 path: "shopOrder.shop",
                 select: "name"
+            }, {
+                path: "shopOrder.owner",
+                select: "fullname socketId"
+            }, {
+                path: "user",
+                select: "fullname email mobile"
             }
         ])
+
+        //socket implementation
+        const io = req.app.get("io");
+        if (io) {
+            newOrder.shopOrder.forEach((shopOrder) => {
+                const ownerSocketId = shopOrder.owner?.socketId;
+                if (ownerSocketId) {
+                    //perticular owner socket id emit the event
+                    io.to(ownerSocketId).emit("newOrder", {
+                        _id: newOrder._id,
+                        deliveryAddress: newOrder?.deliveryAddress,
+                        paymentMethod: newOrder.paymentMethod,
+                        user: newOrder.user,
+                        shopOrder: shopOrder,
+                        createdAt: newOrder.createdAt,
+                        payment: newOrder.payment
+                    });
+                }
+            })
+        }
 
         return res.status(200).json(newOrder)
 
@@ -133,6 +162,79 @@ export const placeOrderController = async (req, res) => {
         return res.status(500).json({
             message: `Create order getting error ${error}`
         })
+    }
+}
+
+//Online Payment Rozarpay
+export const RozarPaymentVerify = async (req, res) => {
+    try {
+        // after click on the payment get the these details on the frontend
+        // when click on the verify button then we send these details
+        const { razorpay_payment_id, orderId } = req.body
+
+        //payment check 
+        const payment = await instance.payments.fetch(razorpay_payment_id)
+
+        if (!payment || payment.status !== "captured") {
+
+            return res.status(400).json({
+                message: `Payment does not captured`
+            })
+        }
+
+        const order = await Order.findById(orderId)
+
+        if (!order) {
+            return res.status(400).json({
+                message: `Order not found`
+            })
+        }
+
+        order.payment = true
+        order.razorpayPaymentId = razorpay_payment_id
+        await order.save()
+
+        await order.populate([
+            {
+                path: "shopOrder.shopOrderItems.item",
+                select: "name image price"
+            },
+            {
+                path: "shopOrder.shop",
+                select: "name"
+            }, {
+                path: "shopOrder.owner",
+                select: "fullname socketId"
+            }, {
+                path: "user",
+                select: "fullname email mobile"
+            }
+        ])
+
+        //socket implementation
+        const io = req.app.get("io");
+        if (io) {
+            order.shopOrder.forEach((shopOrder) => {
+                const ownerSocketId = shopOrder.owner?.socketId;
+                if (ownerSocketId) {
+                    //perticular owner socket id emit the event
+                    io.to(ownerSocketId).emit("newOrder", {
+                        _id: order._id,
+                        deliveryAddress: order?.deliveryAddress,
+                        paymentMethod: order.paymentMethod,
+                        user: order.user,
+                        shopOrder: shopOrder,
+                        createdAt: order.createdAt,
+                        payment: order.payment
+                    });
+                }
+            })
+        }
+
+        return res.status(200).json(order)
+
+    } catch (error) {
+        return res.status(500).json({ message: `Payment verify getting error ${error}` })
     }
 }
 
@@ -317,7 +419,7 @@ export const updateOrderstatus = async (req, res) => {
                 { path: "shopOrder.assignedDeliveryBoy", select: "fullname email mobile" },
 
                 // { path: "shopOrder.owner", select: "fullname email mobile" },
-                // { path: "user", select: "fullname email mobile" },
+                { path: "user", select: "socketId" },
 
                 // { path: "shopOrder.assignedDeliveryBoy", select: "fullname email mobile" },
                 // {
@@ -327,6 +429,19 @@ export const updateOrderstatus = async (req, res) => {
             ]);
 
 
+
+        const io = req.app.get("io");
+        if (io) {
+            const ownerSocketId = order.user?.socketId;
+            if (ownerSocketId) {
+                io.to(ownerSocketId).emit("updateStatus", {
+                    orderId: order._id,
+                    shopId: updatedShopOrder?.shop?._id,
+                    status: updatedShopOrder?.status,
+                    userId: order.user?._id,
+                });
+            }
+        }
 
         // return res.status(200).json(shopOrder.status);
         return res.status(200).json({
@@ -778,49 +893,3 @@ export const verifyDeliveryOTP = async (req, res) => {
     }
 };
 
-//Online Payment Rozarpay
-export const RozarPaymentVerify = async (req, res) => {
-    try {
-        // after click on the payment get the these details on the frontend
-        // when click on the verify button then we send these details
-        const { razorpay_payment_id, orderId } = req.body
-
-        //payment check 
-        const payment = await instance.payments.fetch(razorpay_payment_id)
-
-        if (!payment || payment.status !== "captured") {
-
-            return res.status(400).json({
-                message: `Payment does not captured`
-            })
-        }
-
-        const order = await Order.findById(orderId)
-
-        if (!order) {
-            return res.status(400).json({
-                message: `Order not found`
-            })
-        }
-
-        order.payment = true
-        order.razorpayPaymentId = razorpay_payment_id
-        await order.save()
-
-        await order.populate([
-            {
-                path: "shopOrder.shopOrderItems.item",
-                select: "name image price"
-            },
-            {
-                path: "shopOrder.shop",
-                select: "name"
-            }
-        ])
-
-        return res.status(200).json(order)
-
-    } catch (error) {
-        return res.status(500).json({ message: `Payment verify getting error ${error}` })
-    }
-}

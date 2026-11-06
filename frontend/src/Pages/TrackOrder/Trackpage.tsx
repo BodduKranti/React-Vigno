@@ -15,9 +15,6 @@ const Trackpage = () => {
 
     const { data, isLoading } = useGetApi(`${ROUTES.GET_USER_ORDER_BY_ID}/${orderId}`, undefined, !!useorderId)
 
-    console.log('user order by order id', data)
-    console.log('user order by order id isLoading', isLoading)
-
     useEffect(() => {
         setUseOrderId(orderId)
     }, [orderId])

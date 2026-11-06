@@ -1,13 +1,14 @@
-import { useMemo } from "react"
+import { useEffect, useMemo } from "react"
 import UserOrderCardItem from "./UserOrderCardItem"
 import '../ViewOrderlist.css'
-import { useAppSelecter } from "../../../Store/hook"
+import { useAppDispatch, useAppSelecter } from "../../../Store/hook"
+import { updateRealtimeorderStatus } from "../../../Store/Reducer/AuthSlice/UserSlice"
 
 
 const UserOrderCard = () => {
 
-    const { order } = useAppSelecter((state) => state.userInfo)
-
+    const { order, socket, userData } = useAppSelecter((state) => state.userInfo)
+    const dispatch = useAppDispatch()
     const list = useMemo(() => {
         const all = order ?? []
         return all
@@ -18,6 +19,23 @@ const UserOrderCard = () => {
         //     )
         // )
     }, [order])
+
+    useEffect(() => {
+        socket.on('updateStatus', (data: any) => {
+
+            const { orderId, shopId, status, userId } = data
+            if (userId === userData?._id) {
+                dispatch(updateRealtimeorderStatus({ orderId, shopId, status, userId }))
+            }
+        })
+
+        return () => {
+            if (socket) {
+                socket.off('newOrder')
+                socket.off('updateStatus')
+            }
+        }
+    }, [socket, order])
 
 
     return (

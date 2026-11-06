@@ -1,8 +1,8 @@
 
 
 import L, { type LatLngTuple } from 'leaflet'
-import scooter from '../../../public/images/scooter.png'
-import home from '../../../public/images/home.png'
+import scooter from '/images/scooter.png'
+import home from '/images/home.png'
 import { MapContainer, Marker, Polyline, Popup, TileLayer } from 'react-leaflet'
 
 const deliveryBoyIcon = new L.Icon({

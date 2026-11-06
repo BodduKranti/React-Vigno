@@ -22,3 +22,4 @@
                 currency: "INR",
                 receipt: `receipt_${Date.now()}`//download the receipt
             })
+# 12 npm i socket.io 

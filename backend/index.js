@@ -11,7 +11,28 @@ import shopItemrouts from './src/routes/shopitems.route.js';
 import orderroute from './src/routes/order.route.js';
 
 
+// http server
+import http from 'http';
+import { Server } from 'socket.io';
+import { socketHandler } from './socket.js';
+
+
+
 const app = express();
+const server = http.createServer(app);
+
+const io = new Server(server, {
+    cors: {
+        origin: process.env.CLIENT_URL,
+        methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"],
+        credentials: true,
+    }
+});
+app.set("io", io) // Set the io instance in the app object  
+
+
+
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cors({
@@ -29,7 +50,10 @@ app.use("/api/shop", shopRoutes)
 app.use("/api/shop/shopitems", shopItemrouts)
 app.use("/api/shop/order", orderroute)
 
-app.listen(ENV.PORT, () => {
+
+// Socket.io connection handling
+socketHandler(io);
+server.listen(ENV.PORT, () => {
     dbConnect()
     console.log(`This server is running sds on ${ENV.PORT}`)
 })

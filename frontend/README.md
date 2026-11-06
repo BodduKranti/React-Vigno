@@ -29,3 +29,8 @@
     5. in the front end side 
         razarpay window open script use
         <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+# 16 npm i socket.io-client
+    steps 
+        1 npm i socket.io-client 
+            this is for connect between backend to frontend

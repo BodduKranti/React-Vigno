@@ -22,7 +22,9 @@ interface userAuth {
     isAuthenitcate: boolean,
     cartItems: cartitemsprops[],
     order: any[],
-    userData: any
+    userData: any,
+    socket: any,
+    _id: string | null
 }
 
 // interface userToken extends userAuth {
@@ -30,6 +32,7 @@ interface userAuth {
 // }
 
 const inititalValue: userAuth = {
+    _id: null,
     fullname: '',
     email: '',
     loading: true,
@@ -39,7 +42,8 @@ const inititalValue: userAuth = {
     isAuthenitcate: false,
     cartItems: [],
     order: [],
-    userData: null
+    userData: null,
+    socket: null
 }
 
 const userAuthSlice = createSlice({
@@ -79,6 +83,27 @@ const userAuthSlice = createSlice({
         },
         clearCart: (state) => {
             state.cartItems = []
+        },
+        setSocketId(state, action: PayloadAction<any>) {
+            state.socket = action.payload
+        },
+        setMyOrder: (state, action: PayloadAction<any>) => {
+            state.order = action.payload
+        },
+        updateRealtimeorderStatus: (state, action: PayloadAction<any>) => {
+
+            const { orderId, shopId, status } = action.payload
+
+
+            const order = state.order.find((o) => o._id === orderId);
+            if (!order) return;
+
+            const shopOrder = order.shopOrder.find(
+                (so: any) => (so.shop?._id ?? so.shop) === shopId
+            );
+            if (!shopOrder) return;
+
+            shopOrder.status = status;
         }
     },
     extraReducers: (builder) => {
@@ -88,7 +113,6 @@ const userAuthSlice = createSlice({
                 state.error = ''
             })
             .addCase(getUserfun.fulfilled, (state, action: Partial<any>) => {
-                // console.log(`user data`, action.payload)
                 state.userData = action.payload
                 state.loading = false,
                     state.fullname = action?.payload?.fullname || '',
@@ -96,6 +120,7 @@ const userAuthSlice = createSlice({
                     state.role = action?.payload?.role || '',
                     state.location = action?.payload?.location || null,
                     state.isAuthenitcate = true
+                state._id = action?.payload?._id || null
             })
             .addCase(getUserfun.rejected, (state, action: Partial<any>) => {
                 state.loading = false
@@ -121,6 +146,9 @@ export const {
     addCart,
     removeCart,
     deleteCart,
-    clearCart
+    clearCart,
+    setSocketId,
+    setMyOrder,
+    updateRealtimeorderStatus
 } = userAuthSlice.actions;
 export default userAuthSlice.reducer
