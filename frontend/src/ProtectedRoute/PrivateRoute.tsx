@@ -16,7 +16,7 @@ import { io } from "socket.io-client";
 import { setSocketId } from "../Store/Reducer/AuthSlice/UserSlice";
 import { useAppDispatch } from "../Store/hook";
 
-export const serverUrl = "http://localhost:5000";
+export const serverUrl = import.meta.env.VITE_SOCOKET_SERVER_URL;
 
 
 const FullPageLoader = () => (
@@ -58,7 +58,7 @@ const PrivateRoute = ({ allowRoles }: PrivateRouteProps) => {
 
     //socket connection
     useEffect(() => {
-        const socketInstance = io(serverUrl, { withCredentials: true })
+        const socketInstance = io(serverUrl, { withCredentials: true, transports: ["websocket"] },)
         dispatch(setSocketId(socketInstance))
         socketInstance.on('connect', () => {
             if (user) {
