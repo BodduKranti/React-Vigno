@@ -105,9 +105,11 @@ const RegisterForm = () => {
             onSuccess: (data) => {
                 console.log(`google data : ${data}`)
                 toast.success(`Successfully Register with Goolge`)
+                localStorage.setItem('token', data?.token)
                 setLoadergoogle(false)
                 navigate("/")
                 dispatch(getUserfun())
+
             },
             onError: (error: any) => {
                 const errorMessage = ErrorAxios(error)
@@ -126,7 +128,7 @@ const RegisterForm = () => {
                     <SocialLogin
                         socialButtonsection={<>
                             <SocialButtons
-                                socialIcon={<FcGoogle className='w-5 h-5' />}
+                                socialIcon={loadergoogle ? '' : <FcGoogle className='w-5 h-5' />}
                                 title={loadergoogle ?
                                     <div className="h-6 w-6 animate-spin rounded-full border-4 border-orange-600 border-t-transparent" /> : `Sign up with Google`}
                                 onClick={handleGoogleAuth}

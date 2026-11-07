@@ -308,10 +308,13 @@ export const resetPassword = async (req, res) => {
 
 // Google Authentication Controller
 export const googleAuthContrller = async (req, res) => {
+    console.log('google auth', req.body)
     try {
         const { fullname, email, mobile } = req.body;
 
-        if (!fullname || !email) {
+
+
+        if (!email) {
             return res.status(400).json({
                 success: false,
                 message: "Name and email are required",
@@ -336,6 +339,7 @@ export const googleAuthContrller = async (req, res) => {
         res.cookie("token", token, cookieOptions);
 
         return res.status(200).json({
+            token: token,
             success: true,
             message: "Google authentication successful",
             user: {

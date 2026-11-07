@@ -84,7 +84,7 @@ const LoginForm = () => {
                 toast.success(`Successfully Logged in with Goolge`)
                 setLoadergoogle(false)
                 dispatch(getUserfun())
-
+                localStorage.setItem('token', data?.token)
             },
             onError: (error: any) => {
                 toast.error(`${error}`)
@@ -102,7 +102,7 @@ const LoginForm = () => {
                     <SocialLogin
                         socialButtonsection={<>
                             <SocialButtons
-                                socialIcon={<FcGoogle className='w-5 h-5' />}
+                                socialIcon={loadergoogle ? '' : <FcGoogle className='w-5 h-5' />}
                                 title={loadergoogle ?
                                     <div className="h-6 w-6 animate-spin rounded-full border-4 border-orange-600 border-t-transparent" /> : `Sign in with Google`}
                                 onClick={handleGoogleAuth}
