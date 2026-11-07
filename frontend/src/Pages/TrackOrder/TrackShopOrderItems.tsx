@@ -4,6 +4,8 @@ import TrackDeliveryBoyDetails from "./TrackDeliveryBoyDetails";
 import DeliveryBoyTracking from "../DeliveryBoy/DeliveryBoyTracking";
 import DeliveredSuccess from "./DeliveredSuccess/DeliveredSuccess";
 import { useAppSelecter } from "../../Store/hook";
+// import { orderRatingfun } from "../../hooks/useShop";
+// import { ROUTES } from "../../type";
 
 interface shopOderGetItem {
     shop: shopOrderDetails,
@@ -14,6 +16,15 @@ const TrackShopOrderItems = ({ shop: s, data }: shopOderGetItem) => {
     const { location } = useAppSelecter((state) => state.dblivelocation)
 
     console.log('deliveryBoyLocation', location)
+
+    // const orderRatingMethod = orderRatingfun()
+
+    // const orderRating = (rating:any)=>{
+    //     orderRatingMethod.mutate({
+    //         URL:ROUTES.ORDER_RATING,
+    //         payload
+    //     })
+    // }
     return (
         <div className="ov-body border-t-0! grid grid-cols-1 md:flex items-center gap-4 ">
             <div className="w-full md:w-1/2">
@@ -81,7 +92,7 @@ const TrackShopOrderItems = ({ shop: s, data }: shopOderGetItem) => {
                         restaurant={s.shop?.name}
                         orderId={data._id}
                         deliveredAt={data?.updatedAt}
-                        onRate={(stars) => console.log("Rating:", stars)}
+                    // onRateFun={orderRating}
                     />
                 )}
 

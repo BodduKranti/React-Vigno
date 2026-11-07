@@ -20,7 +20,9 @@ const ViewOrdered = () => {
         if (role === 'owner') {
             dispatch(getOwnerOrder())
         }
-    }, [dispatch])
+    }, [dispatch, order, role])
+
+    console.log('view order', order)
     return (
         <div className="cats max-w-[1600px] mx-auto">
             <h2>My Order</h2>

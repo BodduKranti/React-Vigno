@@ -18,6 +18,7 @@ import Checkout from "../Pages/Checkout/Checkout";
 import Ordered from "../Pages/Order/Ordered";
 import ViewOrdered from "../Pages/Order/ViewOrdered";
 import Trackpage from "../Pages/TrackOrder/Trackpage";
+import TodayDeliveryCard from "../Pages/DeliveryBoy/TodayDeliveryCard";
 
 
 export const pageRoutes = createBrowserRouter([
@@ -58,7 +59,10 @@ export const pageRoutes = createBrowserRouter([
     },
     {
         element: <PrivateRoute allowRoles={["deliveryboy"]} />,
-        children: [{ path: "/role/deliveryboy", element: <DeliveryBoyDashboard /> }],
+        children: [
+            { path: "/role/deliveryboy", element: <DeliveryBoyDashboard /> },
+            { path: "/role/deliveryboy/today-delivered", element: <TodayDeliveryCard /> }
+        ],
     },
     {
         element: <PrivateRoute allowRoles={["user", "owner", "deliveryboy"]} />,

@@ -1,12 +1,17 @@
 import { useState } from "react"
-import type { Status } from "../../../type"
+import { ROUTES, type Status } from "../../../type"
 import Button from "../../../components/field/Button"
 import { useNavigate } from "react-router"
+import Ratingstar from "../../../components/RatingOrder/Ratingstar"
+import { orderRatingfun } from "../../../hooks/useShop"
+import { toast } from "react-toastify"
+import { ErrorAxios } from "../../../services/ErrorIntersects"
 
 interface item {
     image: string,
     name: string,
-    price: any
+    price: any,
+    _id?: string
 }
 
 interface OrderItem {
@@ -89,6 +94,27 @@ const UserOrderCardItem = ({ items: o }: UserOrderCardItem) => {
     const allItems = o.shopOrder.flatMap((s) => s.shopOrderItems ?? [])
     const itemCount = allItems.reduce((n, i) => n + i.quantity, 0)
 
+    const orderRatingMethod = orderRatingfun()
+
+    const orderRating = (itemId: any, rating: any) => {
+        console.log('itemID', itemId)
+        console.log('rating', rating)
+        orderRatingMethod.mutate({
+            URL: ROUTES.ORDER_RATING,
+            payload: {
+                itemId,
+                rating
+            }
+        }, {
+            onSuccess: () => {
+                toast.success(`Thank you for food rating`)
+            },
+            onError: (err: any) => {
+                const errmsg = ErrorAxios(err)
+                toast.error(errmsg)
+            }
+        })
+    }
 
     return (
         <li key={o._id} className="ov-card flex flex-col">
@@ -148,6 +174,15 @@ const UserOrderCardItem = ({ items: o }: UserOrderCardItem) => {
                                         {itemName(i)}
                                         <small>{i.quantity} × {money(i.price)}</small>
                                     </span>
+                                    {s.status === 'delivered' &&
+                                        <Ratingstar
+                                            starClassname={`text-[18px]!`}
+                                            className={`gap-0!`}
+                                            onRate={(count: any) => {
+                                                orderRating(i?.item?._id, count)
+                                            }}
+                                        />
+                                    }
                                     <b>{money(i.price * i.quantity)}</b>
                                 </li>
                             ))}

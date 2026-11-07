@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import "./DeliveredSuccess.css";
+import { dateText } from "../../Order/UserOrder/UserOrderCardItem";
+import Button from "../../../components/field/Button";
+import Ratingstar from "../../../components/RatingOrder/Ratingstar";
 
 export interface DeliveredSuccessProps {
     restaurant?: string;
@@ -9,7 +12,7 @@ export interface DeliveredSuccessProps {
     durationMins?: number;
     onReorder?: () => void;
     onHelp?: () => void;
-    onRate?: (stars: number) => void;
+    onRateFun?: ((stars: any) => void | undefined) | undefined
 }
 
 const LABELS = ["", "Poor", "Could be better", "Good", "Really good", "Loved it!"];
@@ -22,13 +25,13 @@ const DeliveredSuccess: React.FC<DeliveredSuccessProps> = ({
     durationMins = 32,
     onReorder,
     onHelp,
-    onRate,
+    onRateFun,
 }) => {
     const [rating, setRating] = useState<number>(0);
 
-    const rate = (n: number) => {
+    const onRatef = (n: any) => {
         setRating(n);
-        onRate?.(n);
+        onRateFun?.(n)
     };
 
     return (
@@ -48,34 +51,36 @@ const DeliveredSuccess: React.FC<DeliveredSuccessProps> = ({
             </div>
 
             <dl className="ds-facts">
-                <div><dt>Delivered at</dt><dd>{deliveredAt}</dd></div>
+                <div><dt>Delivered at</dt><dd>{dateText(deliveredAt)}</dd></div>
                 <div><dt>Delivery time</dt><dd>{durationMins} min</dd></div>
-                <div><dt>Order ID</dt><dd>{orderId}</dd></div>
+                <div><dt>Order ID</dt><dd>{orderId.slice(-6)}</dd></div>
             </dl>
 
             <div className="ds-rate">
                 <strong>How was your food?</strong>
-                <div className="ds-stars" role="radiogroup" aria-label="Rate your order">
-                    {[1, 2, 3, 4, 5].map((n) => (
-                        <button
-                            key={n}
-                            type="button"
-                            role="radio"
-                            aria-checked={rating === n}
-                            aria-label={`${n} star${n > 1 ? "s" : ""}`}
-                            className={`ds-star${n <= rating ? " on" : ""}`}
-                            onClick={() => rate(n)}
-                        >
-                            ★
-                        </button>
-                    ))}
-                </div>
+                <Ratingstar
+                    onRate={onRatef}
+                />
                 <div className="ds-hint">{rating ? `${LABELS[rating]} — thanks for rating!` : "Tap a star to rate"}</div>
             </div>
 
             <div className="ds-actions">
-                <button type="button" className="ds-btn ds-primary" onClick={onReorder}>Reorder</button>
-                <button type="button" className="ds-btn ds-ghost" onClick={onHelp}>Get help</button>
+                <Button
+                    className={`ds-btn ds-primary`}
+                    btnTxt={'Reorder'}
+                    onClick={onReorder}
+                    btnColor="warning"
+                    type="button"
+                />
+                <Button
+                    className={`ds-btn ds-ghost`}
+                    btnTxt={'Get help'}
+                    onClick={onHelp}
+                    btnColor="warning"
+                    type="button"
+                />
+                {/* <button type="button" className="ds-btn ds-primary" onClick={onReorder}>Reorder</button> */}
+                {/* <button type="button" className="ds-btn ds-ghost" onClick={onHelp}>Get help</button> */}
             </div>
         </section>
     );

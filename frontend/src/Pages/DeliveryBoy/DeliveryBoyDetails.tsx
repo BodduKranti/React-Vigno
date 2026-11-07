@@ -4,6 +4,7 @@ import { useAppSelecter } from "../../Store/hook"
 
 const DeliveryBoyDetails = () => {
     const { userData } = useAppSelecter((state) => state.userInfo)
+    const { location }: any = useAppSelecter((state) => state.dblivelocation)
 
     return (
         <div className="overflow-hidden rounded-3xl bg-white shadow-xl shadow-orange-100">
@@ -26,7 +27,9 @@ const DeliveryBoyDetails = () => {
                 </div>
                 <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-white/20 px-3 py-1.5 text-sm">
                     <Pin />
-                    {userData?.location?.coordinates[0].toFixed(4) ?? "--"}, {userData?.location?.coordinates[1].toFixed(4) ?? "--"}
+                    <span>Lon:{location ? (location?.[userData._id]?.lat).toFixed(4) : userData?.location?.coordinates[0].toFixed(4) ?? "--"}</span>
+                    <span>Lat:{location ? (location?.[userData?._id]?.lon).toFixed(4) : userData?.location?.coordinates[1].toFixed(4) ?? "--"}</span>
+                    {/* {userData?.location?.coordinates[0].toFixed(4) ?? "--"}, {userData?.location?.coordinates[1].toFixed(4) ?? "--"} */}
                 </div>
             </section>
 

@@ -1,5 +1,5 @@
 import express from 'express'
-import { acceptOrder, getAssignmentOrderController, getCurrentOrder, getMyOrder, getOrderByID, getOwnerOrder, placeOrderController, RozarPaymentVerify, sendDeliveryyOTP, updateOrderstatus, user_owner_orderController, verifyDeliveryOTP } from '../controllers/order.controller.js'
+import { acceptOrder, deliveryBoyEarning, getAssignmentOrderController, getCurrentOrder, getMyOrder, getOrderByID, getOwnerOrder, placeOrderController, RozarPaymentVerify, sendDeliveryyOTP, updateOrderstatus, user_owner_orderController, verifyDeliveryOTP } from '../controllers/order.controller.js'
 import { isAuthMiddleWare } from '../middleware/isAuth.js'
 const orderroute = express.Router()
 
@@ -18,6 +18,7 @@ orderroute.post(`/acceptOrder/:assignmentId`, isAuthMiddleWare, acceptOrder)
 orderroute.get('/getOrderByID/:orderId', isAuthMiddleWare, getOrderByID)
 orderroute.post('/order-status/:orderId/:shopId', isAuthMiddleWare, updateOrderstatus)
 
+orderroute.get('/todaydelivery', isAuthMiddleWare, deliveryBoyEarning)
 
 
 //verifyDeliveryOTP , sendDeliveryyOTP

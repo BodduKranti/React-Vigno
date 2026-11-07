@@ -1,57 +1,85 @@
+import jwt from "jsonwebtoken";
 import User from "./src/models/user.model.js";
 
-export const socketHandler = async (io) => {
-    io.on('connection', (socket) => {
-        console.log('A user connected:', socket.id);
-        socket.on('identify', async ({ userId }) => {
+export const socketHandler = (io) => {
+    // Authenticate once, at handshake
+    io.use((socket, next) => {
+        try {
+            const token = socket.handshake.auth?.token;
+            if (!token) return next(new Error("Unauthorized"));
+            const payload = jwt.verify(token, process.env.JWT_SECRET);
+            socket.userId = payload.id; // adjust to your token's field
+            next();
+        } catch {
+            next(new Error("Unauthorized"));
+        }
+    });
+
+    io.on("connection", async (socket) => {
+        console.log("A user connected:", socket.id, socket.userId);
+
+        // Personal room: lets you emit to a user without storing socketId
+        socket.join(`user:${socket.userId}`);
+
+        try {
+            await User.findByIdAndUpdate(socket.userId, {
+                socketId: socket.id,
+                isOnline: true,
+            });
+        } catch (error) {
+            console.error("Error marking user online:", error);
+        }
+
+        socket.on("updateLocation", async ({ longitude, latitude, customerId } = {}) => {
             try {
-                console.log('Identifying user with ID:', userId);
-                const user = await User.findByIdAndUpdate(userId, {
-                    socketId: socket.id,
-                    isOnline: true
-                }, { new: true });
-            }
-            catch (error) {
-                console.error('Error identifying user:', error);
-            }
-        })
+                const lng = Number(longitude);
+                const lat = Number(latitude);
 
-
-        socket.on('updateLocation', async ({ userId, longitude,
-            latitude }) => {
-            try {
-                console.log('Updating location for user ID:', userId, 'to:', { longitude, latitude });
-
-                const user = await User.findByIdAndUpdate(userId, {
-                    location: {
-                        type: 'Point',
-                        coordinates: [longitude, latitude],
-                    },
-                    isOnline: true,
-                    socketId: socket.id
-                }, { new: true });
-
-
-                if (user) {
-                    io.emit('locationUpdated', { deliveryuserId: user._id, longitude, latitude });
+                if (
+                    !Number.isFinite(lng) || !Number.isFinite(lat) ||
+                    lng < -180 || lng > 180 || lat < -90 || lat > 90
+                ) {
+                    return;
                 }
 
+                const user = await User.findByIdAndUpdate(
+                    socket.userId,
+                    {
+                        location: {
+                            type: "Point",
+                            coordinates: [lng, lat]
+                        },
+                        isOnline: true,
+                        socketId: socket.id,
+                    },
+                    { returnDocument: "after" }
+                );
+
+                if (user && customerId) {
+                    // Only the relevant customer gets it
+                    io.to(`user:${customerId}`).emit("locationUpdated", {
+                        deliveryuserId: user._id,
+                        longitude: lng,
+                        latitude: lat,
+                    });
+                }
             } catch (error) {
-                console.error('Error updating user location:', error);
+                console.error("Error updating user location:", error);
             }
         });
 
-        // Handle disconnection
-        socket.on('disconnect', async () => {
-            console.log('A user disconnected:', socket.id);
+        socket.on("disconnect", async () => {
+            console.log("A user disconnected:", socket.id);
             try {
-                await User.findOneAndUpdate({ socketId: socket.id }, {
-                    socketId: null,
-                    isOnline: false
-                });
+                // Matches on socketId, so an old socket's disconnect
+                // won't mark a user offline after they reconnected
+                await User.findOneAndUpdate(
+                    { socketId: socket.id },
+                    { socketId: null, isOnline: false }
+                );
             } catch (error) {
-                console.error('Error updating user on disconnect:', error);
+                console.error("Error updating user on disconnect:", error);
             }
         });
-    })
-}
+    });
+};

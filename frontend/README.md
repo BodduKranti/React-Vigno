@@ -34,3 +34,5 @@
     steps 
         1 npm i socket.io-client 
             this is for connect between backend to frontend
+
+# 17 npm i recharts [for chart]

@@ -2,13 +2,15 @@ import { Pin } from "lucide-react"
 import OrderItem from "../Order/OrderItem"
 import DeliveryBoyTracking from "./DeliveryBoyTracking"
 import Button from "../../components/field/Button"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import VerifyOtpSection from "../../components/VerifyOtp/VerifyOtpSection"
 import { sendDeliveryOTP, verifyDeliveryOTP } from "../../hooks/useShop"
 import { ROUTES } from "../../type"
 import { toast } from "react-toastify"
 import { ErrorAxios } from "../../services/ErrorIntersects"
 import LoaderSpin from "../../components/LoaderSpin"
+import { useAppDispatch, useAppSelecter } from "../../Store/hook"
+import { setDeliveryBoyLocation } from "../../Store/Reducer/DeliveryBoyLiveLocation/DeliveryBoyLiveLocation"
 
 interface shopOrderItemsporp {
     _id: string,
@@ -35,25 +37,33 @@ interface userprops {
     email: string,
     mobile: any
 }
+interface deliveryBoylocationprops {
+    lat: number,
+    lon: number
+}
 
 interface allDetails {
     deliveryAddress: deliveryAddressprops,
     shopOrder: shopOrderprps
     user: userprops,
-    _id: string
+    _id: string,
+    deliveryBoylocation: deliveryBoylocationprops,
+    customerLocation: deliveryBoylocationprops
 }
 
 interface currentOrderprops {
     currentorder: allDetails,
-    refetchCurrentOrder: () => void,
-    refetchAvailableOrders: () => void
+    refetchCurrentOrder?: () => void,
+    refetchAvailableOrders?: () => void
 }
 
 
 const CurrentOrderSection = ({ currentorder, refetchCurrentOrder, refetchAvailableOrders }: currentOrderprops) => {
-
+    const dispatch = useAppDispatch()
+    const { socket, userData } = useAppSelecter((state) => state.userInfo)
     const [showOtpbox, setShowOtpbox] = useState<boolean>(false)
     const [loader, setLoader] = useState<boolean>(false)
+    const { location } = useAppSelecter((state) => state.dblivelocation)
 
     const deliveryOTP = sendDeliveryOTP()
     const verifyOTP = verifyDeliveryOTP()
@@ -85,7 +95,7 @@ const CurrentOrderSection = ({ currentorder, refetchCurrentOrder, refetchAvailab
 
     //verify otp
     const onVerify = (otp: any) => {
-        console.log('otp', otp)
+        setLoader(true)
         verifyOTP.mutate({
             URL: ROUTES.VERYFIE_DELIVERY_OTP,
             payload: {
@@ -97,12 +107,14 @@ const CurrentOrderSection = ({ currentorder, refetchCurrentOrder, refetchAvailab
             onSuccess: (data: any) => {
                 toast.success(data?.message)
                 setShowOtpbox(false)
-                refetchCurrentOrder()
-                refetchAvailableOrders()
+                refetchCurrentOrder?.()
+                refetchAvailableOrders?.()
+                setLoader(false)
             },
             onError: (error: any) => {
                 const errmsg = ErrorAxios(error)
                 toast.error(errmsg)
+                setLoader(false)
             }
         })
     }
@@ -117,8 +129,19 @@ const CurrentOrderSection = ({ currentorder, refetchCurrentOrder, refetchAvailab
 
     }
 
+    useEffect(() => {
+        socket?.on("locationUpdated", (data: any) => {
+            console.log('locationUpdated ', data)
 
-    console.log('currentorder deliverbosy', currentorder)
+            dispatch(setDeliveryBoyLocation({ deliveryuserId: data?.deliveryuserId, lat: data.latitude, lon: data.longitude }))
+        })
+
+        return () => {
+            if (socket) {
+                socket.off("locationUpdated")
+            }
+        }
+    }, [socket, userData, dispatch])
 
     return (
         <section className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-orange-100">
@@ -156,7 +179,16 @@ const CurrentOrderSection = ({ currentorder, refetchCurrentOrder, refetchAvailab
                 </div>
 
                 <DeliveryBoyTracking
-                    currentorder={currentorder}
+                    currentorder={{
+                        deliveryBoylocation: location?.[userData._id] || {
+                            lat: Number(userData?.location?.coordinates[1]),
+                            lon: Number(userData?.location?.coordinates[0])
+                        },
+                        customerLocation: {
+                            lat: Number(currentorder?.customerLocation?.lat),
+                            lon: Number(currentorder?.customerLocation?.lon),
+                        }
+                    }}
                 />
 
                 {
@@ -177,6 +209,7 @@ const CurrentOrderSection = ({ currentorder, refetchCurrentOrder, refetchAvailab
                                 onResend={onResend}
                                 onBack={onBack}
                                 length={4}
+                                loading={loader}
                             />
                         </div>
                 }

@@ -6,24 +6,27 @@ import DeliveryOrderList from "./DeliveryOrderList"
 import CurrentOrderSection from "./CurrentOrderSection"
 import { useEffect, useState } from "react"
 import { useAppSelecter } from "../../Store/hook"
+import TodayDeliveryOrderRecords from "./TodayDeliveryOrderRecords"
 
 const DeliveryBoyOrdersection = () => {
     const { socket, userData, } = useAppSelecter((state) => state.userInfo)
     const { data, refetch } = getAssignments()
     const availbleAssignments = Array.isArray(data) && data || []
-    const [noCurrentOrder, setNoCurrentOrder] = useState(true)
+    const [noCurrentOrder, setNoCurrentOrder] = useState<boolean>(false)
+
     // const { data: current } = getCurrentOrder()
-    const { data: currentorder, isError, refetch: refetchCurrentOrder }: any = useGetApi(`${ROUTES.GET_CURRENT_ORDER}`, undefined, noCurrentOrder)
-
-
-
+    const {
+        data: currentorder,
+        isError,
+        refetch: refetchCurrentOrder
+    }: any = useGetApi(`${ROUTES.GET_CURRENT_ORDER}`, undefined, noCurrentOrder)
     useEffect(() => {
 
-        if (isError) {
-            setNoCurrentOrder(false)
+        if (!isError) {
+            setNoCurrentOrder(true)
         }
         console.log('isError', isError)
-    }, [isError])
+    }, [isError, currentorder])
 
 
 
@@ -62,7 +65,6 @@ const DeliveryBoyOrdersection = () => {
         socket?.on("newDeliveryAssignment", (data: any) => {
             console.log('new order', data)
             if (data?.sentTo === userData?.id) {
-                refetch()
                 refetchCurrentOrder()
             }
         })
@@ -72,16 +74,17 @@ const DeliveryBoyOrdersection = () => {
         }
     }, [socket])
 
-    console.log('currentorder', currentorder)
 
     return (
         <div className="w-full">
+
+            <TodayDeliveryOrderRecords />
 
             {
                 !isError && currentorder ?
                     <CurrentOrderSection
                         currentorder={currentorder}
-                        refetchCurrentOrder={refetchCurrentOrder}
+                        // refetchCurrentOrder={refetchCurrentOrder}
                         refetchAvailableOrders={refetch}
                     />
                     :

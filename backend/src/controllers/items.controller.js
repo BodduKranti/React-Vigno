@@ -248,3 +248,51 @@ export const searchItems = async (req, res) => {
         })
     }
 }
+
+
+export const userOrderRatingcontroller = async (req, res) => {
+    try {
+        const { itemId, rating } = req.body
+        console.log('req.body', req.body)
+        if (!itemId || rating === undefined || rating === null) {
+            return res.status(400).json({
+                message: "ItemId and Rating are required"
+            })
+        }
+
+        const numericRating = Number(rating)
+
+        if (Number.isNaN(numericRating) || numericRating < 1 || numericRating > 5) {
+            return res.status(400).json({
+                message: "Rating should be between 1 and 5"
+            })
+        }
+
+        const item = await ShopItems.findById(itemId)
+
+        if (!item) {
+            return res.status(404).json({
+                message: "Item not found"
+            })
+        }
+
+        const oldCount = item.rating?.count ?? 0
+        const oldAvg = item.rating?.average ?? 0
+
+        const newCount = oldCount + 1
+        const newAvg = (oldAvg * oldCount + numericRating) / newCount
+
+        item.rating = {
+            count: newCount,
+            average: Number(newAvg.toFixed(2))
+        }
+
+        await item.save()
+
+        return res.status(200).json({ rating: item.rating })
+    } catch (error) {
+        return res.status(500).json({
+            message: `Rating given error ${error.message}`
+        })
+    }
+}

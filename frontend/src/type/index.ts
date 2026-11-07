@@ -61,7 +61,13 @@ export const ROUTES = Object.freeze({
     SEARCH_ITEMS: '/shop/shopitems/searchItems',
 
     //Verify Payment
-    VERIFY_PAYMENT: '/shop/order/verify-payment'
+    VERIFY_PAYMENT: '/shop/order/verify-payment',
+
+    //Rating order
+    ORDER_RATING: `/shop/shopitems/order-rating`,
+
+    //Get Todys Deliveries
+    TODAY_DELIVERY: `/shop/order/todaydelivery`
 });
 
 

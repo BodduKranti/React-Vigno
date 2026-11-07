@@ -26,11 +26,11 @@ export const getuserOrder = createAsyncThunk<any, void, { rejectValue: string }>
         const res: any = await queryClient.fetchQuery({
             queryKey: ['user', 'order'],
             queryFn: () => AxiosInstance.get(ROUTES.GET_USER_ORDERS, { withCredentials: true, signal }),
-            staleTime: Infinity
+            staleTime: 0
         })
         return res.data
     } catch (error: any) {
-        rejectWithValue(error?.response?.data?.message)
+        return rejectWithValue(error?.response?.data?.message ?? 'Failed to fetch orders')
     }
 })
 

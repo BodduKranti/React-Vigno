@@ -8,13 +8,13 @@ interface OtpVerifyprops {
     onVerify: (code: string) => void,
     onResend: () => void,
     onBack: () => void,
+    loading?: boolean
 }
 
 // Step 2: enter the OTP. Auto-focus, paste support, backspace, resend timer.
-export default function VerifyOtpSection({ data, length = 4, onVerify, onResend, onBack }: OtpVerifyprops) {
+export default function VerifyOtpSection({ data, length = 4, onVerify, onResend, onBack, loading }: OtpVerifyprops) {
     const [digits, setDigits] = useState(Array(length).fill(""));
     const [error, setError] = useState<string>("");
-    const [loading, setLoading] = useState<boolean>(false);
     const [seconds, setSeconds] = useState(30);
     const refs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -55,14 +55,12 @@ export default function VerifyOtpSection({ data, length = 4, onVerify, onResend,
         const code = digits.join("");
         if (code.length < length) return setError(`Enter the ${length}-digit code.`);
         setError("");
-        setLoading(true);
         try {
 
             await onVerify(code);
         } catch (err: any) {
             setError(err.message || "Invalid or expired code.");
         } finally {
-            setLoading(false);
         }
     }
 

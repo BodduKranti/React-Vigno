@@ -16,12 +16,13 @@ import {
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { logoutUserfun } from "../../hooks/useGetuser";
-import { Link, NavLink } from "react-router";
+import { Link, NavLink, useNavigate } from "react-router";
 import { useAppDispatch } from "../../Store/hook";
 import { logout } from "../../Store/Reducer/AuthSlice/UserSlice";
 import CurrentLocation from "../Location/Location";
 import UserProfile from "../UserProfile/UserProfile";
 import Logo from "../Logo";
+import { ROLE_HOME } from "../../type";
 
 const navigation = [
     { name: "Home", href: "/", icon: House },
@@ -32,14 +33,14 @@ const navigation = [
 
 export default function DeliveryBoyNavbar({ user }: { user: any }) {
     const dispatch = useAppDispatch()
-
+    const Navigate = useNavigate()
     const [mobileOpen, setMobileOpen] = useState(false);
     // Replace these values with real cart and user data.
     const cartCount = 3;
 
     const profileItems = [
         { name: "My Orders", href: "/orders", icon: ClipboardList },
-        { name: "Favorites", href: "/favorites", icon: Heart },
+        { name: "Today ", href: "/role/deliveryboy/today-delivered", icon: Heart },
         { name: "Addresses", href: "/addresses", icon: MapPinned },
         { name: "Payments", href: "/payments", icon: CreditCard },
         { name: "Profile", href: "/profile", icon: UserRound },
@@ -69,7 +70,7 @@ export default function DeliveryBoyNavbar({ user }: { user: any }) {
                 <div className="mx-auto hidden max-w-[1600px] justify-between items-center gap-5 px-6 py-4 lg:flex xl:gap-7">
                     {/* Logo */}
                     <Link
-                        to={"/"}
+                        to={ROLE_HOME[user.role as keyof typeof ROLE_HOME]}
                         className="flex shrink-0 items-center gap-2"
                         aria-label="QuickBite home"
                     >
@@ -96,6 +97,8 @@ export default function DeliveryBoyNavbar({ user }: { user: any }) {
                             type="button"
                             aria-label={`Shopping cart with ${cartCount} items`}
                             className="relative shrink-0 text-gray-800 transition hover:scale-110 hover:text-orange-500"
+                            onClick={() => Navigate(`/role/deliveryboy`)}
+
                         >
                             {/* <ShoppingCart size={26} /> */}
                             My Order
