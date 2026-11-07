@@ -12,9 +12,17 @@ const transporter = nodemailer.createTransport({
         pass: ENV.SMTP_PASS,
     },
 
-    connectionTimeout: 15000,
-    greetingTimeout: 15000,
-    socketTimeout: 20000,
+    pool: true,
+    maxConnections: 2,
+    maxMessages: 10,
+
+    connectionTimeout: 20000,
+    greetingTimeout: 20000,
+    socketTimeout: 30000,
+
+    tls: {
+        minVersion: "TLSv1.2",
+    },
 });
 
 // Verify SMTP connection
