@@ -23,3 +23,4 @@
                 receipt: `receipt_${Date.now()}`//download the receipt
             })
 # 12 npm i socket.io 
+# 13 npm install resend [for email sending]

@@ -18,4 +18,7 @@ export const ENV = {
     ROZAR_SECRET_KEY: process.env.ROZAR_SECRET_KEY,
     ROZARPAY_ACCOUNT_ID: process.env.ROZARPAY_ACCOUNT_ID,
     ROZARPAY_MERCHANT_ID: process.env.ROZARPAY_MERCHANT_ID,
+
+    //RESEND EMAIL
+    RESEND_API_KEY: process.env.RESEND_API_KEY
 }
