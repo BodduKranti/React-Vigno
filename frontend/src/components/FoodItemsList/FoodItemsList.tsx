@@ -11,7 +11,8 @@ const FoodItemsListsection = () => {
     // const { foodItemsListData } = FoodItemsList()
     const { searchFood } = useAppSelecter((state) => state.searchFoodlist)
     const { city } = useCity()
-    const { data, isLoading } = useGetApi(`${ROUTES.GET_ALL_SHOP_ITEM_BY_CITY}/${city}`, undefined, !!city)
+    const { searchCity } = useAppSelecter((state) => state.map)
+    const { data, isLoading } = searchCity ? useGetApi(`${ROUTES.GET_ALL_SHOP_ITEM_BY_CITY}/${searchCity}`, undefined, !!searchCity) : useGetApi(`${ROUTES.GET_ALL_SHOP_ITEM_BY_CITY}/${city}`, undefined, !!city)
     const foodItemsListData = Array.isArray(data) && data || []
     const { data: search, isLoading: searchloading } = useGetApi(`${ROUTES.SEARCH_ITEMS}?query=${searchFood}&city=${city}`, undefined, !!searchFood)
     const searchItemList = Array.isArray(search) && search || []

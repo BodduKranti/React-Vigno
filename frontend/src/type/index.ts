@@ -67,7 +67,10 @@ export const ROUTES = Object.freeze({
     ORDER_RATING: `/shop/shopitems/order-rating`,
 
     //Get Todys Deliveries
-    TODAY_DELIVERY: `/shop/order/todaydelivery`
+    TODAY_DELIVERY: `/shop/order/todaydelivery`,
+
+
+    GET_ALL_CITIES: `/shop/getall-cities`
 });
 
 

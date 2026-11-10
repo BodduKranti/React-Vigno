@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelecter } from "../../../Store/hook"
 import NoitemShopfound from "../../../components/NoitemShopfound"
 import React, { useEffect } from "react"
 import { setMyOrder } from "../../../Store/Reducer/AuthSlice/UserSlice"
+import { getOwnerOrder } from "../../../Store/StoreThunk/GetUserThunk"
 
 
 
@@ -16,6 +17,7 @@ const OwnerOrderCard = () => {
             socket.on('newOrder', (data: any) => {
                 if (data?.shopOrder?.owner?._id === userData?._id) {
                     dispatch(setMyOrder([data, ...order]))
+                    dispatch(getOwnerOrder())
                 }
             })
         }
@@ -26,7 +28,7 @@ const OwnerOrderCard = () => {
                 socket.off('updateStatus')
             }
         }
-    }, [socket, order])
+    }, [socket])
 
     return (
         order?.length == 0 ?

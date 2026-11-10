@@ -35,3 +35,5 @@ export const verifyOrderPayment = () => usePostApi()
 
 // Order Rating
 export const orderRatingfun = () => usePostApi()
+
+//Get all cities

@@ -10,6 +10,7 @@ shopItemrouts.put(`/updateShopItems/:itemId`, isAuthMiddleWare, upload.single("i
 shopItemrouts.get('/getAllshopItems', isAuthMiddleWare, getShopItemscontroller)
 shopItemrouts.get(`/getItemById/:itemId`, isAuthMiddleWare, getShopItemsbyId)
 shopItemrouts.delete(`/deleteItemById/:itemId`, isAuthMiddleWare, deleteShopItemControler)
+shopItemrouts.get(`/getallitemsBycity`, isAuthMiddleWare, getshopItemsbyCity)
 shopItemrouts.get(`/getallitemsBycity/:city`, isAuthMiddleWare, getshopItemsbyCity)
 shopItemrouts.get('/getcateitmeByCat/:cat', isAuthMiddleWare, getCategoryItemsbyCategoryname)
 shopItemrouts.get('/searchItems', isAuthMiddleWare, searchItems)

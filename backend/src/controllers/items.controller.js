@@ -38,6 +38,10 @@ export const createShopItems = async (req, res) => {
         ]);
 
 
+        const io = req.app.get("io");
+        io?.emit("newShopItem", { item: shopItems, shopId: shop._id });
+
+
         return res.status(200).json({
             data: shop,
             message: `Successfully created shop item`

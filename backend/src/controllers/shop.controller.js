@@ -129,6 +129,29 @@ export const getShopBycity = async (req, res) => {
     }
 }
 
+// export const getShopBycity = async (req, res) => {
+//     try {
+//         const { city } = req.params
+
+//         const filter = city
+//             ? { city: { $regex: new RegExp(`^${escapeRegex(city)}$`, "i") } }
+//             : {}
+
+//         const shops = await Shop.find(filter)
+//             .populate({
+//                 path: "items",
+//                 options: { sort: { updatedAt: -1 } }
+//             })
+//             .sort({ updatedAt: -1 })
+
+//         return res.status(200).json(shops)
+//     } catch (error) {
+//         return res.status(500).json({
+//             message: `City api getting error ${error}`
+//         })
+//     }
+// }
+
 //GEt shop by request the id
 export const getShopByShopidcontroller = async (req, res) => {
     try {
@@ -149,6 +172,58 @@ export const getShopByShopidcontroller = async (req, res) => {
     } catch (error) {
         return res.status(500).json({
             message: `Get shop by id getting error ${error}`
+        })
+    }
+}
+
+
+
+// Get all shops with their items (no city filter)
+export const getAllShopsWithItemsController = async (req, res) => {
+    try {
+        const shops = await Shop.find({})
+            .populate({
+                path: "items",
+                options: { sort: { updatedAt: -1 } }
+            })
+            .sort({ updatedAt: -1 })
+
+        if (!shops || shops.length === 0) {
+            return res.status(404).json({ message: `No shops found` })
+        }
+
+        return res.status(200).json(shops)
+    } catch (error) {
+        return res.status(500).json({
+            message: `Get all shops error ${error}`
+        })
+    }
+}
+
+//Get All cities
+// Get all unique cities (optional search with ?q=del)
+export const getAllCitiesController = async (req, res) => {
+    try {
+        const { q } = req.query
+
+        const filter = q
+            ? { city: { $regex: escapeRegex(q), $options: 'i' } }  // contains match
+            : {}
+
+        const cities = await Shop.distinct('city', filter)
+
+        // clean, dedupe case-insensitively, sort A-Z
+        const unique = [...new Map(
+            cities
+                .filter(Boolean)
+                .map((c) => c.trim())
+                .map((c) => [c.toLowerCase(), c])
+        ).values()].sort((a, b) => a.localeCompare(b))
+
+        return res.status(200).json(unique)
+    } catch (error) {
+        return res.status(500).json({
+            message: `Get cities error ${error}`
         })
     }
 }

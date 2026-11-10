@@ -7,14 +7,17 @@ import LoaderSpin from "../LoaderSpin"
 import { OverlayShopCard } from "./BestShopItems"
 import NoitemShopfound from "../NoitemShopfound"
 import { BsShop } from "react-icons/bs"
+import { useAppSelecter } from "../../Store/hook"
 
 
 
 
 const BestShop = () => {
     const { city } = useCity()
+    const { searchCity } = useAppSelecter((state) => state.map)
 
-    const { data, isLoading } = useGetApi(`${ROUTES.GET_SHOPS_BY_CITY}/${city}`, undefined, !!city);
+    console.log('searchCity', searchCity)
+    const { data, isLoading } = searchCity ? useGetApi(`${ROUTES.GET_SHOPS_BY_CITY}/${searchCity}`, undefined, !!searchCity) : useGetApi(`${ROUTES.GET_SHOPS_BY_CITY}/${city}`, undefined, !!city);
     const shopList = Array.isArray(data) && data || []
 
     return (
@@ -24,7 +27,7 @@ const BestShop = () => {
             <div className="mb-5">
                 <h1 className="text-2xl font-semibold text-gray-900 sm:text-3xl">Restaurants near you</h1>
                 <p className="mt-1 text-sm text-gray-500">
-                    {shopList?.length} {shopList.length === 1 ? "place" : "places"} delivering in {city}
+                    {shopList?.length} {shopList.length === 1 ? "place" : "places"} delivering in {searchCity ? searchCity : city}
                 </p>
             </div>
             {

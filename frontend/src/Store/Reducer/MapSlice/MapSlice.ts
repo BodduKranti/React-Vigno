@@ -13,7 +13,8 @@ const mapSlice = createSlice({
         address: null,
         isLoading: false,
         isError: '',
-        searhlist: null
+        searhlist: null,
+        searchCity: null
     },
     reducers: {
         //get the lat and lon value from the useCity
@@ -25,6 +26,9 @@ const mapSlice = createSlice({
         //get the lat and lon value from the useCity
         setAddress: (state, action) => {
             state.address = action.payload
+        },
+        setSearchCity: (state, action) => {
+            state.searchCity = action.payload
         }
     },
     extraReducers: (builder) => {
@@ -47,5 +51,5 @@ const mapSlice = createSlice({
             })
     }
 })
-export const { setLocation, setAddress } = mapSlice.actions
+export const { setLocation, setAddress, setSearchCity } = mapSlice.actions
 export default mapSlice.reducer
