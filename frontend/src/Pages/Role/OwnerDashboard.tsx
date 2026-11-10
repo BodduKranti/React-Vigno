@@ -15,6 +15,8 @@ const OwnerDashboard = () => {
         dispatch(getShopData())
     }, [])
 
+    console.log('shopdata', shopdata)
+
     return (
         <div className="w-full md:h-[calc(100vh-82px)] h-auto md:overflow-y-auto bg-[#fff8f1] flex justify-center">
 

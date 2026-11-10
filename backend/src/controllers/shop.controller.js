@@ -82,7 +82,7 @@ export const deleteShopController = async (req, res) => {
 }
 
 // get allshop
-export const getAllShopController3 = async (req, res) => {
+export const getAllShopController = async (req, res) => {
     try {
         console.log('get shop')
         const shop = await Shop.findOne({ owner: req.userId }).populate([
@@ -178,7 +178,7 @@ export const getShopByShopidcontroller = async (req, res) => {
 
 
 // Get all shops with their items (no city filter)
-export const getAllShopController = async (req, res) => {
+export const getAllShopControllerold = async (req, res) => {
     try {
         const shops = await Shop.find({})
             .populate({
