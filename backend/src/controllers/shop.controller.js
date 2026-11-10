@@ -82,7 +82,7 @@ export const deleteShopController = async (req, res) => {
 }
 
 // get allshop
-export const getAllShopController = async (req, res) => {
+export const getAllShopController3 = async (req, res) => {
     try {
         console.log('get shop')
         const shop = await Shop.findOne({ owner: req.userId }).populate([
@@ -172,6 +172,29 @@ export const getShopByShopidcontroller = async (req, res) => {
     } catch (error) {
         return res.status(500).json({
             message: `Get shop by id getting error ${error}`
+        })
+    }
+}
+
+
+// Get all shops with their items (no city filter)
+export const getAllShopController = async (req, res) => {
+    try {
+        const shops = await Shop.find({})
+            .populate({
+                path: "items",
+                options: { sort: { updatedAt: -1 } }
+            })
+            .sort({ updatedAt: -1 })
+
+        if (!shops || shops.length === 0) {
+            return res.status(404).json({ message: `No shops found` })
+        }
+
+        return res.status(200).json(shops)
+    } catch (error) {
+        return res.status(500).json({
+            message: `Get all shops error ${error}`
         })
     }
 }

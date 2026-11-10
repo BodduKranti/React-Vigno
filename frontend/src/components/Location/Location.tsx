@@ -7,17 +7,19 @@ import { searchFoodTitle } from '../../Store/Reducer/SearchFoodslice/SearchFoods
 import { useGetApi } from '../../hooks/useAxiosServices';
 import { ROUTES } from '../../type';
 import { setSearchCity } from '../../Store/Reducer/MapSlice/MapSlice';
+import { IoMdCloseCircleOutline } from 'react-icons/io';
 
 const CurrentLocation = () => {
     const dispatch = useAppDispatch()
     const { city } = useCity()
     const [opencitySearch, setOpencitySearch] = useState<boolean>(false)
+    const [searchCitylc, setSearchCitylc] = useState<any>('')
     const [location, setLocation] = useState<string>('Hyderabad')
     const { dropdownRef } = useAuthContext()
     const [search, setSearch] = useState("");
 
     const { data } = useGetApi(`${ROUTES.GET_ALL_CITIES}`)
-    const cities = Array.isArray(data) && [...new Set(data)] || []
+    const cities = Array.isArray(data) && searchCitylc ? [...new Set(data.filter((city) => city.toLowerCase().includes(searchCitylc.toLowerCase())))] : Array.isArray(data) && [...new Set(data)] || []
 
     useEffect(() => {
         dispatch(searchFoodTitle(search))
@@ -42,16 +44,25 @@ const CurrentLocation = () => {
 
                 {opencitySearch && (
                     <div className="absolute left-0 top-full mt-3 w-64 rounded-2xl border border-gray-100 bg-white p-4 shadow-xl">
+
+                        <div
+                            onClick={() => setOpencitySearch(false)}
+                            className='w-5 h-5 absolute top-2 right-3 cursor-pointer hover:text-orange-400'>
+                            <IoMdCloseCircleOutline size={18} />
+                        </div>
+
                         <p className="mb-3 text-sm font-semibold text-gray-900">
                             Choose your location
                         </p>
-                        {/* ${location === city ? "bg-orange-50 font-semibold text-orange-600" : "text-gray-700"                                } */}
-                        {/* <div
-                            className={`block w-full rounded-lg px-3 py-2.5 text-left text-sm transition hover:bg-orange-50 hover:text-orange-600 
-                                `}
-                        >
-                            {city ?? ''}
-                        </div> */}
+                        <div className='w-full mb-4'>
+                            <input
+                                autoFocus
+                                value={searchCitylc}
+                                onChange={(e) => setSearchCitylc(e.target.value)}
+                                placeholder="Search city..."
+                                className="w-full px-3 py-2 border-b outline-none"
+                            />
+                        </div>
 
                         {cities?.map(
                             (city) => (
@@ -102,7 +113,7 @@ const CurrentLocation = () => {
             </form>
 
             {/* Mobile location */}
-            <div className='w-full relative'>
+            <div className='w-full relative md:hidden'>
                 <button
                     type="button"
                     onClick={() => setOpencitySearch((prev) => !prev)}
@@ -110,7 +121,7 @@ const CurrentLocation = () => {
                 >
                     <MapPin size={17} className="text-orange-500" />
                     <span>Deliver to:</span>
-                    <span className="font-semibold text-gray-900">{city ?? 'loading...'}</span>
+                    <span className="font-semibold text-gray-900">{location ? location : city ?? 'loading...'}</span>
                     {/* <ChevronDown size={15} /> */}
                 </button>
 
@@ -118,6 +129,22 @@ const CurrentLocation = () => {
 
                 {opencitySearch && (
                     <div className={`mt-2 rounded-xl border border-gray-100 bg-white p-2 shadow-lg absolute top-full w-full ring ring-orange-100`}>
+
+                        <div
+                            onClick={() => setOpencitySearch(false)}
+                            className='w-5 h-5 absolute top-2 right-3 cursor-pointer hover:text-orange-400'>
+                            <IoMdCloseCircleOutline size={18} />
+                        </div>
+                        <div className='w-full mb-4'>
+                            <input
+                                autoFocus
+                                value={searchCitylc}
+                                onChange={(e) => setSearchCitylc(e.target.value)}
+                                placeholder="Search city..."
+                                className="w-full px-3 py-2 border-b outline-none"
+                            />
+                        </div>
+
                         {cities?.map(
                             (city) => (
                                 <button
@@ -127,6 +154,7 @@ const CurrentLocation = () => {
                                         setLocation(city);
                                         dispatch(setSearchCity(city))
                                         setOpencitySearch(false)
+                                        setSearchCitylc('')
                                     }}
                                     className={`block w-full rounded-lg px-3 py-2 text-left text-sm hover:bg-orange-50 ${location === city
                                         ? "bg-orange-50 font-semibold text-orange-600"
